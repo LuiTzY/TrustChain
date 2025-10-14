@@ -1,0 +1,57 @@
+services:
+  
+  # api:
+  #   build:
+  #     context: ./backend
+  #     dockerfile: Dockerfile
+
+  #   container_name: TRUSTCHAIN-BACKEND
+  #   image: trustchain-backend:latest
+  #   networks:
+  #     - trustChainNet
+
+  # celery:
+    
+  #   container_name: TRUSTCHAIN-BACKEND
+  #   image: trustchain-backend:latest
+  #   command: celery -A core worker -l info -Q listener
+  #   networks:
+  #     - trustChainNet
+
+  redis:
+    ports: 
+      - 6379:6379
+    image: redis:7.2.11-alpine3.21
+
+    networks:
+      - trustChainNet
+  
+  # db:
+  #     container_name: db
+  #     image: mysql:8.0.41-oraclelinux9
+  #     ports:
+  #       - 3307:3306
+  #     networks:
+  #     - trustChainNet
+
+  # hardat:
+  #   container_name: hardart
+  #   ports: 
+  #     - 8585:8585
+
+  #   networks:
+  #     - trustChainNet
+
+  # frontend:
+  #   build:
+  #     context: ./frontend
+  #     Dockerfile: Dockerfile
+
+  #   container_name: TRUSTCHAIN-FRONTEND
+  #   image: trustchain-frontend/latest
+  #   ports:
+  #     - 0000:0000 #definir puertos
+
+networks:
+  trustChainNet:
+    driver: bridge
