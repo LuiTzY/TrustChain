@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import BaseUserManager,AbstractBaseUser
-from simple_history.models import HistoricalRecords
+from src.apps.common.fields import WalletAddressField 
+
 
 class UserManager(BaseUserManager):
       
@@ -39,11 +40,11 @@ class User(AbstractBaseUser):
     last_name = models.CharField(max_length=50, verbose_name="Apellido")
     email = models.EmailField(unique=True, max_length=200, verbose_name="Correo Electronico")
     password = models.CharField(max_length=128, verbose_name="Contraseña")
+    wallet_address = WalletAddressField(verbose_name="Wallet", unique=True, null=True, blank=True)
     user_active = models.BooleanField(default=True,verbose_name="Usuario Activo")
     user_admin = models.BooleanField(default=False, verbose_name="Usuario administrador")
     created_at = models.DateField(auto_now_add = True, verbose_name = "Creado el")
     update_at = models.DateField(auto_now=True, verbose_name = "Actualizado el")
-    historial = HistoricalRecords()
     
     objects = UserManager()
     USERNAME_FIELD = 'email'
@@ -53,7 +54,6 @@ class User(AbstractBaseUser):
         verbose_name = "Usuario"
         verbose_name_plural = "Usuarios"
     
-     #La forma que se va a imprimir el objeto de tipo usuario
     def __str__(self):
         return f"{self.email} - {self.first_name}"
     
