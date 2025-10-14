@@ -1,0 +1,1 @@
+#Logica directa con django, aqui lo que hacemos es implementar las interfaces con la logica del framework como el ORM y etc

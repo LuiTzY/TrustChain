@@ -3,8 +3,6 @@ from pathlib import Path
 from datetime import timedelta
 
 
-
-
 BASE_DIR = Path(__file__).resolve().parent.parent
 DEBUG = True
 
@@ -29,7 +27,8 @@ THIRD_APPS = [
 ]
 
 OWN_APPS = [
-    
+    'src.apps.users',
+    'src.apps.marketplace.products'
 ]
 
 INSTALLED_APPS = DEFAULT_APPS + THIRD_APPS + OWN_APPS
@@ -100,6 +99,7 @@ MEDIA_URL = "/"
 STATIC_ROOT = os.path.join(BASE_DIR,"static")
 STATIC_URL  = 'static/'
 
+AUTH_USER_MODEL = "users.User"
 
 
 
@@ -108,7 +108,9 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         #esto se debe de cambiar
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-    )
+    ),
+    # "EXCEPTION_HANDLER": "src.apps.common.exception_handler.custom_exception_handler"
+
 }
 
 
@@ -155,3 +157,16 @@ SIMPLE_JWT = {
     "SLIDING_TOKEN_OBTAIN_SERIALIZER": "rest_framework_simplejwt.serializers.TokenObtainSlidingSerializer",
     "SLIDING_TOKEN_REFRESH_SERIALIZER": "rest_framework_simplejwt.serializers.TokenRefreshSlidingSerializer",
 }
+
+
+#CONFIGURACION DE CELERY
+
+CELERY_BEAT_SCHEDULE = {
+    "web3-events": {
+        "task": "src.apps.marketplace.infraestructure.tasks",
+        "schedule": 1,  # se ejecutara cada 1 segundo
+    },
+}
+
+#Especificamos que broker utilizaremos
+CELERY_BROKER_URL = "redis://127.0.0.1:6379/"

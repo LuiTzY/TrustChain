@@ -1,0 +1,1 @@
+#reglas de negocio directamente, sin importar el framework

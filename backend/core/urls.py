@@ -16,7 +16,7 @@ urlpatterns = [
     path(f'{API_BASE_PREFIX}/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path(f'{API_BASE_PREFIX}/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
     path(f'{API_BASE_PREFIX}/token/blacklist/', TokenBlacklistView.as_view(), name='token_blacklist'),
-    path(f'{API_BASE_PREFIX}/', include('apps.products.urls'))
+    path(f'{API_BASE_PREFIX}/', include('src.apps.marketplace.presentation.products.urls'))
 ]
 
 

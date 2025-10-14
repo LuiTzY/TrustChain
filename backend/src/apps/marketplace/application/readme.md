@@ -1,0 +1,1 @@
+#casos de uso, servicios que son utilizados por entidades y repositorios
