@@ -3,10 +3,11 @@ from src.apps.marketplace.application.products.cancel_product_service import Can
 from src.apps.marketplace.application.products.list_product_service import ListProductService
 from .serializers import ProductSerializer
 from src.apps.marketplace.infraestructure.generics import GenericJwtViewSet
-from src.apps.marketplace.infraestructure.repositories import DjangoProductRepository
+from src.apps.marketplace.infraestructure.repositories import DjangoProductRepository, DjangoWeb3Repository
 from src.apps.common.response import ApiResponse
-
+from src.apps.marketplace.application.products.create_product_web3  import ServiceProductWeb3
 from rest_framework import status
+
 
 class ProductViewSet(GenericJwtViewSet):
     serializer_class = ProductSerializer
@@ -19,7 +20,7 @@ class ProductViewSet(GenericJwtViewSet):
     
     def create(self, request):
         
-        service = ListProductService(self.repo)
+        service = ServiceProductWeb3(DjangoWeb3Repository())
         serializer = ProductSerializer(data=request.data)
 
         if serializer.is_valid():

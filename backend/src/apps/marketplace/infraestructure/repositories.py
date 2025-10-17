@@ -54,7 +54,7 @@ class DjangoProductRepository(ProductRepositoryInterface):
 
 class DjangoWeb3Repository(IWeb3ProductRepositroy):
     
-    def create():
+    def create(self, product):
         
         #nos conectamos al nodo del hardhat
         w3 = Web3(Web3.HTTPProvider(HARDHAT_SERVER_URL))
@@ -71,8 +71,11 @@ class DjangoWeb3Repository(IWeb3ProductRepositroy):
         # elegimos una cuenta de prueba (realmente debemos de pasar el wallet addres del user que esta haciendo la request)
         account = w3.eth.accounts[0] 
         
+        #convertirmos el precio en eth
+        price_in_ethers = Web3.to_wei(product['price'],"ether")
+        
         # creamos la transaccion
-        tx = contract.functions.listItem("Laptop ASUS", 2000000000000000000).build_transaction({
+        tx = contract.functions.listItem(product['name'],product['description'], price_in_ethers).build_transaction({
             "from": account,
             "nonce": w3.eth.get_transaction_count(account), #obtiene el id en memoria del nodo del hardhat
             "gas": 2000000,
@@ -82,9 +85,16 @@ class DjangoWeb3Repository(IWeb3ProductRepositroy):
         
         #logica de la bd para guardar la transacion del producto, aqui deberiamos utilizar otro repo como el de los payments
 
-
+        
         #enviamos la transaccion
         tx_hash = w3.eth.send_transaction(tx)
 
         # esperamos la confirmacion
         receipt = w3.eth.wait_for_transaction_receipt(tx_hash)
+
+        
+        return {
+            "tx_hash": tx_hash.hex(),
+            "block_number": receipt.blockNumber,
+            "status": receipt.status,
+        }

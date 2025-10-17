@@ -7,7 +7,7 @@ class ProductsConfig(AppConfig):
 
     
     def ready(self):
-        print("Se supone que se inicializa esto")
+        # print("Se supone que se inicializa esto")
         #Solo iniciamos los listeners
         from src.apps.marketplace.infraestructure.tasks import run_web3_listeners
         

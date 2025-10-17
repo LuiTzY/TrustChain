@@ -4,4 +4,4 @@ from src.apps.marketplace.infraestructure.models import ProductModel
 class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model =  ProductModel
-        fields = '__all__'
+        fields = ('name','description','price')
