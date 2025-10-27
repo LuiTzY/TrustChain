@@ -1,5 +1,5 @@
 
-from src.apps.marketplace.domain.entities import Product
+from src.apps.marketplace.domain.entities.product import Product
 
 
 class CreateProductFromEventService:

@@ -1,6 +1,6 @@
 # apps/marketplace/product/application/services/cancel_item_service.py
 
-from ...domain.exceptions import ProductNotFound, InvalidOperation
+from ...domain.exceptions.product import ProductNotFound, InvalidOperation
 
 class CancelItemService:
     """Caso de uso: cancelación de un producto publicado."""

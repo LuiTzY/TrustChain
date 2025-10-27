@@ -20,21 +20,7 @@
 
 
 
-Flujo esperado:
-
-Blockchain Event (ItemListed)
-        ↓
-Infrastructure: Web3Listener → parsea el evento
-        ↓
-Application: CreateProductFromEventService → ejecuta el caso de uso
-        ↓
-Domain: ProductEntity → aplica reglas de negocio
-        ↓
-Infrastructure: DjangoProductRepository → guarda en BD
-
-Solo tendriamos que crear evento en la capa de la aplicacion, para que siga el mismo flujo
+Pasos para correr el proyecto.
 
 
-
-Correr celery celery -A src worker -l info
 celery -A core worker -l info --concurrency 1 -P solo

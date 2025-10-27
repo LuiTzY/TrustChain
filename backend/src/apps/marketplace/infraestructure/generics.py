@@ -1,6 +1,7 @@
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework.views import APIView
 
 class JwtAuthMixin:
     """ Representacion de las clases de autenticacion y permisos base """
@@ -14,7 +15,8 @@ class GenericJwtViewSet(JwtAuthMixin,viewsets.ModelViewSet):
     pass
     
     
-class GenericJwtAPIView(JwtAuthMixin,viewsets.ModelViewSet):
+class GenericJwtAPIView(JwtAuthMixin,APIView):
+    permission_clases = [IsAuthenticated]
     """
         Api View generico que cuenta con autenticacion con JWT
     """

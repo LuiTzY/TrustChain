@@ -15,7 +15,7 @@ contract Marketplace {
     mapping(uint => Item) public items;
 
     event ItemListed(uint id, string name, string description, uint price, address seller);
-    event ItemPurchased(uint id, address buyer, uint price);
+    event ItemPurchased(uint id, address buyer, address seller, uint price);
     event ItemCanceled(uint id, address seller);
 
     function listItem(string memory _name,string memory _description, uint _price) public {
@@ -33,7 +33,7 @@ contract Marketplace {
 
         item.seller.transfer(msg.value);
         item.sold = true;
-        emit ItemPurchased(_id, msg.sender, item.price);
+        emit ItemPurchased(_id, msg.sender, item.seller, item.price);
     }
 
 

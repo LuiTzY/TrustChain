@@ -1,2 +1,4 @@
 API_BASE_PREFIX = "api"
-
+API_MARKETPLACE_PREFIX="marketplace"
+API_AUTH_PREFIX="auth"
+API_USER_PREFIX="users"

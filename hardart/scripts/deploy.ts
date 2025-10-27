@@ -1,11 +1,14 @@
 import { network } from "hardhat";
 
 const { ethers } = await network.connect();
-
 async function main() {
   // obtenemos ethers directamente desde hardhat
   // const { ethers } = hre;
 
+  //obtenemos las cuentas
+  const accounts = await ethers.getSigners();
+
+  
   console.log("🚀 Desplegando contrato Marketplace...");
 
   // crear la factory directamente desde los contratos compilados

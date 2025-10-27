@@ -1,22 +1,22 @@
 services:
   
-  # api:
-  #   build:
-  #     context: ./backend
-  #     dockerfile: Dockerfile
+  api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
 
-  #   container_name: TRUSTCHAIN-BACKEND
-  #   image: trustchain-backend:latest
-  #   networks:
-  #     - trustChainNet
+    container_name: TRUSTCHAIN-BACKEND
+    image: trustchain-backend:latest
+    networks:
+      - trustChainNet
 
-  # celery:
+  celery:
     
-  #   container_name: TRUSTCHAIN-BACKEND
-  #   image: trustchain-backend:latest
-  #   command: celery -A core worker -l info -Q listener
-  #   networks:
-  #     - trustChainNet
+    container_name: TRUSTCHAIN-BACKEND
+    image: trustchain-backend:latest
+    command: celery -A core worker -l info --concurrency 1 -P solo
+    networks:
+      - trustChainNet
 
   redis:
     ports: 
@@ -34,13 +34,13 @@ services:
   #     networks:
   #     - trustChainNet
 
-  # hardat:
-  #   container_name: hardart
-  #   ports: 
-  #     - 8585:8585
+  hardhat:
+    container_name: hardart
+    ports: 
+      - 8585:8585
 
-  #   networks:
-  #     - trustChainNet
+    networks:
+      - trustChainNet
 
   # frontend:
   #   build:
