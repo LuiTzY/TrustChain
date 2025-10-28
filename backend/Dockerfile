@@ -8,16 +8,16 @@ ENV PYTHONDONTWRITEBYTECODE=1
 COPY requirements.txt /app
 
 
-RUN apk add --no-cache \
-    musl-dev \
-    gcc \
-    mariadb-dev \
-    mariadb-connector-c-dev \
-    build-base \
-    libffi-dev \
-    pkgconfig \
-    libsasl \
-    && pip install --upgrade pip --no-compile --no-cache-dir
+# RUN apk add --no-cache \
+#     musl-dev \
+#     # gcc \
+#     # mariadb-dev \
+#     # mariadb-connector-c-dev \
+#     # build-base \
+#     libffi-dev \
+#     pkgconfig \
+#     libsasl \
+#     && pip install --upgrade pip --no-compile --no-cache-dir
 
 RUN pip install gunicorn && pip install -r requirements.txt --no-compile --no-cache-dir
 
