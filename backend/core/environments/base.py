@@ -23,7 +23,8 @@ DEFAULT_APPS = [
 THIRD_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
-    'rest_framework_simplejwt.token_blacklist'
+    'rest_framework_simplejwt.token_blacklist',
+    'corsheaders'
 ]
 
 OWN_APPS = [
@@ -38,6 +39,7 @@ INSTALLED_APPS = DEFAULT_APPS + THIRD_APPS + OWN_APPS
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -170,4 +172,6 @@ CELERY_BEAT_SCHEDULE = {
     },
 }
 
-#Especificamos que broker utilizaremos
+#CONFIG DEL CORS
+CORS_ALLOWED_ORIGINS = ['*']
+
