@@ -10,6 +10,8 @@ services:
     depends_on:
       - celery
 
+    ports:
+      - 8000:8000
 
     volumes:
       - ./hardart/artifacts:/app/artifacts #esta es la ruta dentro del contenedor del api donde se guardara el deployment
@@ -55,11 +57,11 @@ services:
       - ./hardart/scripts:/blockchain-node/scripts/
 
     healthcheck:
-      test: ["CMD", "curl" ,"-f", "http://localhost:8545"]
+      test: ["CMD-SHELL", "nc -z 127.0.0.1 8545 || exit 1"]
       interval: 5s
       timeout: 3s
-      retries: 10
-      start_period: 10s
+      retries: 5
+      start_period: 60s
 
     networks:
       - trustChainNet

@@ -171,4 +171,3 @@ CELERY_BEAT_SCHEDULE = {
 }
 
 #Especificamos que broker utilizaremos
-CELERY_BROKER_URL = "redis://host.docker.internal:6379/"

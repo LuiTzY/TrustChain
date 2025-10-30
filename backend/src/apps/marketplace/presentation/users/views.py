@@ -40,6 +40,7 @@ class UserViewSet(GenericJwtViewSet):
 class UserBalanceView(GenericJwtAPIView):
     def __init__(self, **kwargs):
         print(f"Estos son los permisos {self.permission_clases}")
+    
     def get(self,request):
         service =  UserEthersBalance()
         try:
