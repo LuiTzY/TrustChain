@@ -13,23 +13,7 @@ async function main() {
   await marketplace.waitForDeployment();
   const address = await marketplace.getAddress();
   
-  console.log("Marketplace desplegado en:",address );
-
-  const data = {
-    address: address,
-    abi: JSON.parse(marketplace.interface.formatJson())
-  };
-
-  const __filename = fileURLToPath(import.meta.url)
-  const __dirname = path.dirname(__filename);
-
-  //Guardamos el archivo del json 
-  const filePath = path.join(__dirname,"../deployments/deploy.json");
-
-  console.log("El archivo de deploy se guardara en esta ruta", filePath)
-  
-  fs.writeFileSync(filePath, JSON.stringify(data, null,2));
-  console.log("Archivo guardado correctamente");
+  console.log("Desplegamos el contrato en este address", address)
 }
 
 main().catch((err) => {

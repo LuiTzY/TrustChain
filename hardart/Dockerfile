@@ -7,8 +7,10 @@ COPY package*.json ./
 #Copiamos todos los archivos requeridos
 COPY . .
 
+RUN apk add --no-cache wget busybox-extras
 
-EXPOSE 8585
+
+EXPOSE 8545
 
 RUN chmod +x ./setup_hardhat.sh
 
