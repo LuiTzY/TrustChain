@@ -1,47 +1,5 @@
 services:
   
-  api:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
-
-    container_name: TRUSTCHAIN-BACKEND
-    image: trustchain-backend:latest
-    depends_on:
-      - celery
-
-    ports:
-      - 8000:8000
-
-    volumes:
-      - ./hardart/artifacts:/app/artifacts #esta es la ruta dentro del contenedor del api donde se guardara el deployment
-
-    environment:
-      HARDHAT_ABI_PATH: ${HARDHAT_ABI_PATH}
-      HARDHAT_SERVER_URL: ${HARDHAT_SERVER_URL}
-
-    networks:
-      - trustChainNet
-
-  celery:
-    
-    container_name: TRUSTCHAIN-CELERY
-    image: trustchain-backend:latest
-    command: celery -A core worker -l info --concurrency 1 -P solo
-    networks:
-      - trustChainNet
-    depends_on:
-      hardhat:
-        condition: service_healthy
-
-  # db:
-  #     container_name: db
-  #     image: mysql:8.0.41-oraclelinux9
-  #     ports:
-  #       - 3307:3306
-  #     networks:
-  #     - trustChainNet
-
   hardhat:
     build:
       context: ./hardart
@@ -52,20 +10,95 @@ services:
       - 8545:8545
 
     volumes:
-      - ./hardart/artifacts:/blockchain-node/artifacts/
-      - ./hardart/contracts:/blockchain-node/contracts/
-      - ./hardart/scripts:/blockchain-node/scripts/
+      - ./hardart:/blockchain-node/
+      - /blockchain-node/node_modules 
 
     healthcheck:
+    #Check para validar si el puerto esta abierto, esto para validar si el servicio esta UP
       test: ["CMD-SHELL", "nc -z 127.0.0.1 8545 || exit 1"]
       interval: 5s
       timeout: 3s
       retries: 5
       start_period: 60s
+    
+
 
     networks:
       - trustChainNet
   
+  api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+
+    container_name: BACKEND-TRUSTCHAIN
+    image: trustchain-backend:latest
+
+    ports:
+      - 8000:8000
+
+    volumes:
+      - ./hardart/artifacts:/app/artifacts #esta es la ruta dentro del contenedor del api donde se guardara el deployment
+      - ./backend/db.sqlite3:/app/db.sqlite3
+
+    command: ["sh", "-c", "/app/sh.sh"]
+    environment:
+      HARDHAT_SERVER_URL: ${HARDHAT_SERVER_URL}
+      HARDHAT_ABI_PATH: /app/artifacts/contracts/Marketplace.sol/Marketplace.json
+      HARDHAT_MARKETPLACE_PATH_ADDRESS: /app/artifacts/Marketaddress.json
+      DJANGO_SETTINGS_MODULE: core.environments.prod
+
+    networks:
+      - trustChainNet
+
+  celery:
+    
+    container_name: CELERY-TRUSTCHAIN
+    image: trustchain-backend:latest
+    command: ["celery", "-A", "core", "worker", "-l", "info"]
+    networks:
+      - trustChainNet
+
+    depends_on:
+      api:
+        condition: service_started
+      hardhat:
+        condition: service_healthy
+
+    volumes:
+      - ./hardart/artifacts:/app/artifacts #esta es la ruta dentro del contenedor del api donde se guardara el deployment
+      - ./backend/db.sqlite3:/app/db.sqlite3
+
+    environment:
+      HARDHAT_SERVER_URL: ${HARDHAT_SERVER_URL}
+      HARDHAT_ABI_PATH: /app/artifacts/contracts/Marketplace.sol/Marketplace.json
+      HARDHAT_MARKETPLACE_PATH_ADDRESS: /app/artifacts/Marketaddress.json
+      DJANGO_SETTINGS_MODULE: core.environments.prod
+
+      DATABASE_NAME_PROD: trustdb
+      DATABASE_USER_PROD: admin
+      DATABASE_PASSWORD_PROD: 1234
+      DATABASE_HOST_PROD: localhost
+      DATABASE_PORT_PROD: 3306
+  # hardhat-deployer:
+  #   build:
+  #     context: ./blockchain
+  #   container_name: hardhat-deployer
+  #   command: sh /blockchain-node/start_deploy.sh
+  #   depends_on:
+  #     hardhat-node:
+  #       condition: service_healthy
+  #   volumes:
+  #     - ./blockchain:/blockchain-node
+
+  # db:
+  #     container_name: db
+  #     image: mysql:8.0.41-oraclelinux9
+  #     ports:
+  #       - 3307:3306
+  #     networks:
+  #     - trustChainNet
+
   redis:
     ports: 
       - 6379:6379
