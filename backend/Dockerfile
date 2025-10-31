@@ -28,4 +28,5 @@ EXPOSE 8000
 
 RUN chmod +x ./sh.sh
 
-ENTRYPOINT [ "sh", "-c", "./sh.sh" ]
+#Los servicios basados en esta imagen nos pasaran un comando, para no hacer que la imagen sea poco flexible, celery estaba duplicando el servicio cuando lo requerido era ejecutar el worker y no estaba sucediendo
+CMD [ "sh", "-c", "${APP_START_COMMAND}" ]
