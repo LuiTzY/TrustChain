@@ -9,6 +9,14 @@ npx hardhat
 npx hardhat compile 
 #inicamos el nodo de hardhat 
 echo "Iniciando servidor de blockchain JSON-RPC Server"
-npx hardhat node
-#desplegamos el marketplace a un address
+npx hardhat node &
+
+until nc -z hardhat-node 8545; do
+    echo "Esperando que el nodo de hardhat inicie..."
+    sleep 3
+done
+
+echo "Nodo desplegado, Desplegando Marketplace..."
 npx hardhat run scripts/deploy.ts --network localhost
+
+wait  # mantener el contenedor activo
