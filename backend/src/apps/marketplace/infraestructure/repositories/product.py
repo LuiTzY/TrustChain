@@ -23,11 +23,13 @@ class DjangoProductRepository(IProductRepositoryInterface):
             description = entity.description,
             seller = user_seller,
             status = entity.status
-        )
+        )   
+            print("Creamos el producto")
             return product
-    
         except IntegrityError:
             raise ProductBlockhainDuplicated()
+        except Exception as e:
+            print(f"No pudimos crear el producto {e} \n")
             
     def find_by_id(self, item_id: int):
         try:
