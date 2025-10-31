@@ -13,6 +13,12 @@ async function main() {
   await marketplace.waitForDeployment();
   const address = await marketplace.getAddress();
   
+  const data = { address: address };
+  const __filename = fileURLToPath(import.meta.url)
+  const __dirname = path.dirname(__filename);
+
+  const filePath = path.join(__dirname, "../artifacts/Marketaddress.json");
+  fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
   console.log("Desplegamos el contrato en este address", address)
 }
 
