@@ -23,7 +23,7 @@ class ProductEventListener:
 
 
     def run(self):
-        
+        print(f"Estamos escuchando los eventos supuestamente")
         while True:
             for event in self.listed_filter.get_new_entries():
                 print(f"Filtro cargado!! : Estaremos creando los productos\n")
@@ -35,8 +35,8 @@ class ProductEventListener:
                 
                 try:
                     service.execute(args)
-                except:
-                    print(f"Ocurrio el error de registro")
+                except Exception as e:
+                    print(f"Ocurrio el error de registro {e} \n")
                     continue
                 
             for event in self.purchased_filter.get_new_entries():

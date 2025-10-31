@@ -1,12 +1,11 @@
-#!/usr/bin/env python
-"""Django's command-line utility for administrative tasks."""
 import os
 import sys
-
+from core.env import env
 
 def main():
     """Run administrative tasks."""
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'core.environments.local')
+    env('DJANGO_SETTINGS_MODULE')
+    print(f"Este es la variable {env('DJANGO_SETTINGS_MODULE')}")
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:

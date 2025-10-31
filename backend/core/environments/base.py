@@ -5,6 +5,7 @@ from datetime import timedelta
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 DEBUG = True
+DOCKER_ENVIRONMENT=False
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-_6kny%r9i-)*_arwin5(ervwl4pum21_vq8auyku4oj)*r(41j'
@@ -172,6 +173,6 @@ CELERY_BEAT_SCHEDULE = {
     },
 }
 
-#CONFIG DEL CORS
-CORS_ALLOWED_ORIGINS = ['*']
+#CONFIG DEL CORS para permitir solicitudes del cors
+CORS_ALLOWED_ORIGINS = ['http://localhost:5173']
 

@@ -20,4 +20,5 @@ class CreateProductFromEventService:
             seller_wallet=event_data["seller"],
             status="listed"
         )
+        print(f"Esta es la entidad {entity} \n")
         self.repository.save(entity)
