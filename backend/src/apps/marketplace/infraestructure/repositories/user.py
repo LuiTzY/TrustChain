@@ -8,7 +8,7 @@ from src.apps.marketplace.domain.exceptions.user import UserNotFound,UserUnknown
 class DjangoUserRepository(IUserRepository):
     
     def save(self, entity: User):
-        user = UserModel.objects.create(
+        user = UserModel(
             first_name = entity.first_name,
             last_name = entity.last_name,
             email=entity.email,
@@ -16,6 +16,10 @@ class DjangoUserRepository(IUserRepository):
             password =  entity.password,
             wallet_address = entity.wallet_address
         )
+        
+        #aqui encriptamos la password
+        user.set_password(entity.password)
+        user.save()
         return user
     
     def find_by_id(self, user_id):

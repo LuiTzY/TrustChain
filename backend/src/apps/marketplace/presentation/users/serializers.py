@@ -3,7 +3,7 @@ from src.apps.marketplace.infraestructure.models.user import UserModel
 
 
 class UserSerializer(serializers.ModelSerializer):
-    email =  serializers.EmailField(required=False)
+    # email =  serializers.EmailField(required=False)
     password =  serializers.CharField(write_only=True)
     wallet_address= serializers.CharField(required=False)
     created_at = serializers.DateField(read_only=True)
