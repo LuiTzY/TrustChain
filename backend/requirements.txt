@@ -46,7 +46,7 @@ pydantic_core==2.33.2
 PyJWT==2.10.1
 python-dateutil==2.9.0.post0
 pyunormalize==17.0.0
-pywin32==311
+pywin32==311;platform_system == "Windows"
 redis==6.4.0
 regex==2025.9.18
 requests==2.32.5
