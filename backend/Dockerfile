@@ -1,32 +1,49 @@
 FROM python:3.10.16-alpine3.21
 
-#Establecemos el workingdirectory
-WORKDIR /app
-ENV PYTHONDONTWRITEBYTECODE=1 
+# Variables de entorno para optimizar Python
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1
 
-#Copiamos el archivo de los requirements al workidir
+# Establecemos el working directory
+WORKDIR /app
+
+# Copiamos el archivo de requirements para instalar las depedencias
 COPY requirements.txt /app
 
+# Instalamos dependencias del sistema y de python para el proyecto
+RUN apk add --no-cache --virtual .build-deps \
+    gcc \
+    musl-dev \
+    mariadb-dev \
+    mariadb-connector-c-dev \
+    python3-dev \
+    libffi-dev \
+    pkgconfig \
+    && apk add --no-cache \
+    mariadb-connector-c \
+    libffi \
+    libsasl \
+    && pip install --no-cache-dir gunicorn \
+    && pip install --no-cache-dir -r requirements.txt \
+    && apk del .build-deps \
+    && rm -rf /root/.cache
 
-# RUN apk add --no-cache \
-#     musl-dev \
-#     # gcc \
-#     # mariadb-dev \
-#     # mariadb-connector-c-dev \
-#     # build-base \
-#     libffi-dev \
-#     pkgconfig \
-#     libsasl \
-#     && pip install --upgrade pip --no-compile --no-cache-dir
-
-RUN pip install gunicorn && pip install -r requirements.txt --no-compile --no-cache-dir
-
-#Copiamos los otros archivos
+# Copiamos los otros archivos
 COPY . .
 
+# Creamos un usuario que no sea root para temas de seguridad 
+RUN addgroup -g 1000 django \
+    && adduser -D -u 1000 -G django django \
+    && chmod +x ./sh.sh \
+    && chown -R django:django /app 
+
+# Cambiamos al usuario no-root
+USER django
+
+# Exponemos el puerto
 EXPOSE 8000
 
-RUN chmod +x ./sh.sh
-
-#Los servicios basados en esta imagen nos pasaran un comando, para no hacer que la imagen sea poco flexible, celery estaba duplicando el servicio cuando lo requerido era ejecutar el worker y no estaba sucediendo
-CMD [ "sh", "-c", "${APP_START_COMMAND}" ]
+# Comando flexible según variable de entorno
+CMD ["sh", "-c", "${APP_START_COMMAND}"]

@@ -14,7 +14,7 @@ services:
       - /blockchain-node/node_modules 
 
     healthcheck:
-    #Check para validar si el puerto esta abierto, esto para validar si el servicio esta UP
+    #Check para validar si el puerto esta abierto, esto para validar si el servicio esta UP y que al API espere
       test: ["CMD-SHELL", "nc -z 127.0.0.1 8545 || exit 1"]
       interval: 5s
       timeout: 3s
@@ -34,19 +34,27 @@ services:
     container_name: BACKEND-TRUSTCHAIN
     image: trustchain-backend:latest
 
+    depends_on:
+      db:
+        condition: service_healthy
     ports:
       - 8000:8000
 
     volumes:
       - ./hardart/artifacts:/app/artifacts #esta es la ruta dentro del contenedor del api donde se guardara el deployment
-      - ./backend/db.sqlite3:/app/db.sqlite3
+      # - ./backend/db.sqlite3:/app/db.sqlite3
 
     command: ["sh", "-c", "/app/sh.sh"]
     environment:
-      HARDHAT_SERVER_URL: ${HARDHAT_SERVER_URL}
+      HARDHAT_SERVER_URL: http://host.docker.internal:8545
       HARDHAT_ABI_PATH: /app/artifacts/contracts/Marketplace.sol/Marketplace.json
       HARDHAT_MARKETPLACE_PATH_ADDRESS: /app/artifacts/Marketaddress.json
       DJANGO_SETTINGS_MODULE: core.environments.prod
+      DATABASE_NAME_PROD: trustdb
+      DATABASE_USER_PROD: trustuser
+      DATABASE_PASSWORD_PROD: 1234
+      DATABASE_HOST_PROD: db
+      DATABASE_PORT_PROD: 3306
 
     networks:
       - trustChainNet
@@ -64,40 +72,46 @@ services:
         condition: service_started
       hardhat:
         condition: service_healthy
+      
+     
 
     volumes:
       - ./hardart/artifacts:/app/artifacts #esta es la ruta dentro del contenedor del api donde se guardara el deployment
-      - ./backend/db.sqlite3:/app/db.sqlite3
+      # - ./backend/db.sqlite3:/app/db.sqlite3
 
     environment:
-      HARDHAT_SERVER_URL: ${HARDHAT_SERVER_URL}
+      HARDHAT_SERVER_URL: http://host.docker.internal:8545
       HARDHAT_ABI_PATH: /app/artifacts/contracts/Marketplace.sol/Marketplace.json
       HARDHAT_MARKETPLACE_PATH_ADDRESS: /app/artifacts/Marketaddress.json
       DJANGO_SETTINGS_MODULE: core.environments.prod
 
       DATABASE_NAME_PROD: trustdb
-      DATABASE_USER_PROD: admin
+      DATABASE_USER_PROD: trustuser
       DATABASE_PASSWORD_PROD: 1234
-      DATABASE_HOST_PROD: localhost
+      DATABASE_HOST_PROD: db
       DATABASE_PORT_PROD: 3306
-  # hardhat-deployer:
-  #   build:
-  #     context: ./blockchain
-  #   container_name: hardhat-deployer
-  #   command: sh /blockchain-node/start_deploy.sh
-  #   depends_on:
-  #     hardhat-node:
-  #       condition: service_healthy
-  #   volumes:
-  #     - ./blockchain:/blockchain-node
 
-  # db:
-  #     container_name: db
-  #     image: mysql:8.0.41-oraclelinux9
-  #     ports:
-  #       - 3307:3306
-  #     networks:
-  #     - trustChainNet
+  db:
+      container_name: db
+      image: mysql:8.0.41-oraclelinux9
+      ports:
+        - 3306:3306
+
+      #healtcheck para validar la conexion a la db, esto para que el API espere a que el servicio de mysql este up
+      healthcheck:
+        test: ["CMD", "mysqladmin", "ping", "-u","root","-p1234","-h", "localhost"]
+        interval: 10s
+        timeout: 5s
+        retries: 5
+        
+      environment:
+        MYSQL_ROOT_PASSWORD: 1234
+        MYSQL_DATABASE: trustdb
+        MYSQL_USER: trustuser
+        MYSQL_PASSWORD: 1234
+
+      networks:
+      - trustChainNet
 
   redis:
     ports: 

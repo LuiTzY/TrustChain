@@ -4,6 +4,8 @@ WORKDIR /blockchain-node
 
 COPY package*.json ./ 
 
+RUN npm install
+
 #Copiamos todos los archivos requeridos
 COPY . .
 
