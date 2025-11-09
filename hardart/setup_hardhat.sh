@@ -1,9 +1,8 @@
-
 #iniciamos el proyecto de hardhat
-echo "Iniciando instalacion de hardhat "
-npm install hardhat
+# echo "Iniciando instalacion de hardhat "
+# npm install 
 
-echo "Instalacion realizada correctamente, ahora iniciaremos le proyecto"
+echo "niciaremos le proyecto"
 npx hardhat
 #compilamos el smart contact del marketplace
 npx hardhat compile 
