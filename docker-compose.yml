@@ -54,7 +54,7 @@ services:
       DATABASE_USER_PROD: trustuser
       DATABASE_PASSWORD_PROD: 1234
       DATABASE_HOST_PROD: db
-      DATABASE_PORT_PROD: 3306
+      DATABASE_PORT_PROD: 3307
 
     networks:
       - trustChainNet
@@ -89,13 +89,13 @@ services:
       DATABASE_USER_PROD: trustuser
       DATABASE_PASSWORD_PROD: 1234
       DATABASE_HOST_PROD: db
-      DATABASE_PORT_PROD: 3306
+      DATABASE_PORT_PROD: 3307
 
   db:
       container_name: db
       image: mysql:8.0.41-oraclelinux9
       ports:
-        - 3306:3306
+        - 3307:3306
 
       #healtcheck para validar la conexion a la db, esto para que el API espere a que el servicio de mysql este up
       healthcheck:
