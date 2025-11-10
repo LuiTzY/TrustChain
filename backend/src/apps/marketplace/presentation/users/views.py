@@ -6,8 +6,11 @@ from .serializers import UserSerializer
 from src.apps.marketplace.application.users.register_user import RegisterUserService
 from rest_framework import status
 from src.apps.marketplace.application.users.user_balance import UserEthersBalance
+from rest_framework.permissions import AllowAny
 
 class UserViewSet(GenericJwtViewSet):
+    permission_clases =[AllowAny]
+    authentication_clasess=[]
     queryset =  UserModel.objects.all()
     serializer_class = UserSerializer
     repo = DjangoUserRepository()
