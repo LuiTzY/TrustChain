@@ -15,5 +15,4 @@ urlpatterns = [
     path(f'{API_AUTH_PREFIX}/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
     path(f'{API_AUTH_PREFIX}/token/blacklist/', TokenBlacklistView.as_view(), name='token_blacklist'),
     path(f'{API_USER_PREFIX}/balance/', UserBalanceView.as_view(), name='balance'),
-
 ]
