@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import LoginForm from "../components/LoginForm";
-// import img from "../../../../public/Frame.png";
+import img from "../../../../public/Frame.png";
 
 export default function LoginPage() {
   return (
@@ -32,7 +32,7 @@ export default function LoginPage() {
       {/* Columna derecha (imagen) */}
       <div className="w-1/2 h-screen">
         <img
-          // src={img}
+          src={img}
           alt="Fondo de TrustChain"
           className="w-full h-full object-cover"
         />

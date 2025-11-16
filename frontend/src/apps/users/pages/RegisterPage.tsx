@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import RegisterForm from "../components/RegisterForm";
-// import img from "../../../../public/Frame.png";
+import img from "../../../../public/Frame.png";
 
 export default function RegisterPage() {
   return (
@@ -35,7 +35,7 @@ export default function RegisterPage() {
       {/* Columna derecha (imagen) */}
       <div className="w-1/2 h-screen relative">
         <img
-          // src={img}
+          src={img}
           alt="Fondo de registro TrustChain"
           className="w-full h-full object-cover"
         />
