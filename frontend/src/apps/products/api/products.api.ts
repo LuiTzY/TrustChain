@@ -4,8 +4,8 @@ import type { Product } from "../types/product.types";
 const API_URL = "http://localhost:8000/api/products/";
 
 export const getAllProducts = async (): Promise<Product[]> => {
-  const res = await axios.get(API_URL);
-  return res.data;
+  const res = await axios.get("http://localhost:8000/api/products/");
+  return res.data.data; // ✅ extrae directamente el array del backend
 };
 
 export const getProductById = async (id: number): Promise<Product> => {
