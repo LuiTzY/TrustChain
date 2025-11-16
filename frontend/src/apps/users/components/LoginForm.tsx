@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { loginUser } from "../api/auth.api";
 import { useAuth } from "../context/AuthContext";
-// import Button from "../../../components/ui/Button";
-
+import { useNavigate } from "react-router-dom";
 import type { LoginCredentials } from "../types/user.types";
 
 export default function LoginForm() {
   const { login } = useAuth();
+  const navigate = useNavigate(); // 👈 para redirigir
   const [form, setForm] = useState<LoginCredentials>({
     username: "",
     password: "",
@@ -19,25 +19,22 @@ export default function LoginForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      // 🔹 Limpia tokens anteriores
+      // limpiar datos previos
       localStorage.removeItem("accessToken");
       localStorage.removeItem("refreshToken");
       localStorage.removeItem("user");
 
-      // 🔹 Llama al endpoint
-      const response = await loginUser(form); // esto te devuelve { access, refresh }
+      // login simulado (usa users.json)
+      const response = await loginUser(form);
 
-      // 🔹 Guarda los nuevos tokens (revisa qué claves exactas te devuelve tu backend)
       localStorage.setItem("accessToken", response.access);
       localStorage.setItem("refreshToken", response.refresh);
+      localStorage.setItem("user", JSON.stringify(response.user));
 
-      // Si tu backend devuelve también user data:
-      if (response.user) {
-        localStorage.setItem("user", JSON.stringify(response.user));
-      }
-
-      // 🔹 (opcional) Actualiza tu contexto
       login(response.user);
+
+      // ✅ redirige a productos
+      navigate("/products");
     } catch (error) {
       console.error(error);
       setError("Credenciales inválidas o error de servidor.");
@@ -55,7 +52,7 @@ export default function LoginForm() {
           name="username"
           placeholder="Ingresa tu nombre de usuario"
           onChange={handleChange}
-          className="text-[#8e8e8e] text-[0.7rem] self-stretch w-full h-[46px] px-[19px] py-[13px] rounded-full outline outline-1 outline-offset-[-1px] outline-[#5f5f5f]/50 inline-flex justify-start items-center gap-2.5"
+          className="text-[#8e8e8e] text-[0.7rem] self-stretch w-full h-[46px] px-[19px] py-[13px] rounded-full outline-1 outline-offset-[-1px] outline-[#5f5f5f]/50 inline-flex justify-start items-center gap-2.5"
         />
       </div>
 
@@ -66,17 +63,18 @@ export default function LoginForm() {
           type="password"
           placeholder="Introduce tu contraseña"
           onChange={handleChange}
-          className="text-[#8e8e8e] text-[0.7rem] self-stretch w-full h-[46px] px-[19px] py-[13px] rounded-full outline outline-1 outline-offset-[-1px] outline-[#5f5f5f]/50 inline-flex justify-start items-center gap-2.5"
+          className="text-[#8e8e8e] text-[0.7rem] self-stretch w-full h-[46px] px-[19px] py-[13px] rounded-full outline-1 outline-offset-[-1px] outline-[#5f5f5f]/50 inline-flex justify-start items-center gap-2.5"
         />
       </div>
-      {/* <Button
-        text="Iniciar sesión"
-        style={
-          "self-stretch px-9 py-3.5 bg-[#2f45c6] rounded-full inline-flex justify-center items-center gap-[7px] overflow-hidden"
-        }
+
+      <button
         type="submit"
-      /> */}
-      {error && <p className="text-red-500 text-[0.7rem] ">{error}</p>}
+        className="bg-[#2f45c6] text-white px-8 py-3 rounded-full font-['Orbitron'] hover:bg-[#2334a8] transition-all duration-200"
+      >
+        Iniciar sesión
+      </button>
+
+      {error && <p className="text-red-500 text-[0.7rem]">{error}</p>}
     </form>
   );
 }
