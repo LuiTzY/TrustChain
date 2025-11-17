@@ -4,6 +4,7 @@ from src.apps.marketplace.domain.entities.user import User
 from src.apps.marketplace.domain.interfaces import IUserRepository, IWeb3UserRepository
 from src.apps.marketplace.infraestructure.models.user import UserModel
 from src.apps.marketplace.domain.exceptions.user import UserNotFound,UserUnknownError
+from requests.exceptions import ConnectionError
 
 class DjangoUserRepository(IUserRepository):
     
@@ -47,7 +48,19 @@ class DjangoUserRepository(IUserRepository):
 class Web3UserRepository(IWeb3UserRepository):
     
     def __init__(self):
-        self.web3 = Web3(Web3.HTTPProvider(HARDHAT_SERVER_URL))
+        self.web3 = self._init_web3_connection()
+        
+    def _init_web3_connection(self):
+            """
+                Este metodo inicializa la conexion al nodo de la blockchain
+            """
+            w3 = Web3(Web3.HTTPProvider(HARDHAT_SERVER_URL))
+
+            if not w3.is_connected():
+                raise ConnectionError("No se pudo conectar al nodo de la blockchain (RPC).")
+            return w3
+
+            
     def get_available_wallet(self):
         
         all_accounts = self.web3.eth.accounts
