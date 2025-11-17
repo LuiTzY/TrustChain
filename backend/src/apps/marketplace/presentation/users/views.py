@@ -1,8 +1,11 @@
+from src.apps.marketplace.application.users.seller_user_products import UserSellerProductsService
+from src.apps.marketplace.presentation.products.serializers import ProductSerializer
+from src.apps.marketplace.application.users.user_products import UserProductsListService
 from src.apps.marketplace.infraestructure.models.user import UserModel
 from src.apps.marketplace.infraestructure.repositories.user import DjangoUserRepository, Web3UserRepository
 from src.apps.marketplace.infraestructure.generics import GenericJwtViewSet, GenericJwtAPIView
 from src.apps.common.response import ApiResponse
-from .serializers import UserSerializer, UserTokenObtainSerializer
+from .serializers import UserProductSellerSerializer, UserProductTypeListSerializerOptions, UserSerializer, UserTokenObtainSerializer
 from src.apps.marketplace.application.users.register_user import RegisterUserService
 from rest_framework import status
 from src.apps.marketplace.application.users.user_balance import UserEthersBalance
@@ -35,16 +38,12 @@ class UserViewSet(GenericJwtViewSet):
             
             return ApiResponse.success(user_auth, code=status.HTTP_201_CREATED)
         
-        #Esto va en la parte del 
-        print("No es valido por lo que tenemos errores \n")
         return ApiResponse.error(errors=serializer.errors)
 
 
 
 
 class UserBalanceView(GenericJwtAPIView):
-    def __init__(self, **kwargs):
-        print(f"Estos son los permisos {self.permission_clases}")
     
     def get(self,request):
         service =  UserEthersBalance()
@@ -56,4 +55,41 @@ class UserBalanceView(GenericJwtAPIView):
         
         
 class UserAuthView(TokenObtainPairView):
+    """
+        Vista utilizada para la autenticacion devolviendo los tokens con claims
+    """
     serializer_class = UserTokenObtainSerializer
+    
+
+
+class UserProducts(GenericJwtAPIView):
+    """
+        Vista encargada de retornar los productos vendidos o comprados del usuario
+        que haga la solicitud
+    """
+    def get(self, request):
+        print(f"Este es el usuario en la request {self.request.user.username}")
+        repo = DjangoUserRepository()
+        service = UserProductsListService(repo)
+        serializer = UserProductTypeListSerializerOptions(data=self.request.query_params)
+        if serializer.is_valid():
+
+            data = service.execute(self.request.user, serializer.validated_data['list_type'])
+            print(f"Esta es la data que obtuvimos {data} \n")
+            return ApiResponse.success(data=ProductSerializer(data,many=True).data)
+        
+        return ApiResponse.error(errors=serializer.errors)
+
+
+class UserSellerProducts(GenericJwtAPIView):
+    """
+        Vista encargada de retornar los productos vendidos por un usuario en especifico
+    """
+    def get(self, request, id):
+        repo = DjangoUserRepository()
+        service = UserSellerProductsService(repo)
+        if id:
+            data = service.execute(id)
+            return ApiResponse.success(data=ProductSerializer(data,many=True).data)
+        
+        return ApiResponse.error()
