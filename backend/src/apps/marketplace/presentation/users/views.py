@@ -2,11 +2,13 @@ from src.apps.marketplace.infraestructure.models.user import UserModel
 from src.apps.marketplace.infraestructure.repositories.user import DjangoUserRepository, Web3UserRepository
 from src.apps.marketplace.infraestructure.generics import GenericJwtViewSet, GenericJwtAPIView
 from src.apps.common.response import ApiResponse
-from .serializers import UserSerializer
+from .serializers import UserSerializer, UserTokenObtainSerializer
 from src.apps.marketplace.application.users.register_user import RegisterUserService
 from rest_framework import status
 from src.apps.marketplace.application.users.user_balance import UserEthersBalance
 from rest_framework.permissions import AllowAny
+from rest_framework_simplejwt.views import TokenObtainPairView
+
 
 class UserViewSet(GenericJwtViewSet):
     permission_clases =[AllowAny]
@@ -52,3 +54,6 @@ class UserBalanceView(GenericJwtAPIView):
             return ApiResponse.error(f"Ocurrio un error al obtener el balance {e}")
 
         
+        
+class UserAuthView(TokenObtainPairView):
+    serializer_class = UserTokenObtainSerializer

@@ -114,7 +114,7 @@ REST_FRAMEWORK = {
         #esto se debe de cambiar
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
-    # "EXCEPTION_HANDLER": "src.apps.common.exception_handler.custom_exception_handler"
+    "EXCEPTION_HANDLER": "src.apps.common.exception_handler.custom_exception_handler"
 }
 
 
@@ -130,7 +130,7 @@ SIMPLE_JWT = {
     "SIGNING_KEY": SECRET_KEY,
     "VERIFYING_KEY": "",
     "AUDIENCE": None,
-    "ISSUER": None,
+    "ISSUER": "TrustChain",
     "JSON_ENCODER": None,
     "JWK_URL": None,
     "LEEWAY": 0,
@@ -148,7 +148,6 @@ SIMPLE_JWT = {
     "SLIDING_TOKEN_REFRESH_EXP_CLAIM": "refresh_exp",
     "SLIDING_TOKEN_LIFETIME": timedelta(minutes=5),
     "SLIDING_TOKEN_REFRESH_LIFETIME": timedelta(days=1),
-
     "TOKEN_OBTAIN_SERIALIZER": "src.apps.marketplace.presentation.users.serializers.UserTokenObtainSerializer",
     "TOKEN_REFRESH_SERIALIZER": "rest_framework_simplejwt.serializers.TokenRefreshSerializer",
     "TOKEN_VERIFY_SERIALIZER": "rest_framework_simplejwt.serializers.TokenVerifySerializer",
