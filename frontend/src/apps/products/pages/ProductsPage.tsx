@@ -8,10 +8,9 @@ export default function ProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // 🔹 Cargar productos desde el backend
   const fetchProducts = async () => {
     try {
-      const data = await getAllProducts(); // ✅ devuelve directamente un Product[]
+      const data = await getAllProducts(); 
       console.log("Productos cargados:", data);
       setProducts(data);
     } catch (error) {
@@ -22,18 +21,17 @@ export default function ProductsPage() {
     }
   };
 
-  // 🔹 Eliminar producto
   const handleDelete = async (id: number) => {
     const confirmDelete = confirm("¿Seguro que deseas eliminar este producto?");
     if (!confirmDelete) return;
 
     try {
       await deleteProduct(id);
-      alert("Producto eliminado correctamente ✅");
+      alert("Producto eliminado correctamente ");
       fetchProducts(); // recarga la lista
     } catch (error) {
       console.error("Error eliminando producto:", error);
-      alert("No se pudo eliminar el producto ❌");
+      alert("No se pudo eliminar el producto ");
     }
   };
 
