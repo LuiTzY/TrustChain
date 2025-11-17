@@ -2,11 +2,19 @@ from rest_framework.views import exception_handler
 from src.apps.common.response import ApiResponse
 from rest_framework.exceptions import MethodNotAllowed
 from rest_framework import status
+from requests.exceptions import ConnectionError
 
 def custom_exception_handler(exc, context):
-    print("HOLA")
+    
     response = exception_handler(exc, context)
     if response is not None:
+        return ApiResponse.error(
+            message="Error procesando la solicitud",
+            errors=response.data,
+            code=response.status_code
+        )
+        
+    if isinstance(response,ConnectionError):
         return ApiResponse.error(
             message="Error procesando la solicitud",
             errors=response.data,
