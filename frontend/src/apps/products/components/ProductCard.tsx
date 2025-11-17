@@ -52,7 +52,7 @@ export default function ProductCard({
       {/* 🔸 Información */}
       <h3 className="text-lg font-semibold text-gray-800">{name}</h3>
       <p className="text-sm text-gray-500 mb-2 line-clamp-2">{description}</p>
-      <p className="text-blue-600 font-bold mb-4">${price.toFixed(2)}</p>
+      <p className="text-blue-600 font-bold mb-4">${price}</p>
 
       {/* 🔹 Botones de acción para comprador */}
       <div className="flex gap-2">
