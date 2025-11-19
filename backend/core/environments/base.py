@@ -13,6 +13,7 @@ SECRET_KEY = 'django-insecure-_6kny%r9i-)*_arwin5(ervwl4pum21_vq8auyku4oj)*r(41j
 
 # =========== CONFIGURACION DE LAS APPS
 DEFAULT_APPS = [
+    'daphne',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -25,7 +26,9 @@ THIRD_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
-    'corsheaders'
+    'corsheaders',
+    'channels',
+
 ]
 
 OWN_APPS = [
@@ -67,7 +70,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'core.wsgi.application'
-
+ASGI_APPLICATION = 'core.asgi.application'
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -169,3 +172,13 @@ CELERY_BEAT_SCHEDULE = {
 #CONFIG DEL CORS para permitir solicitudes del cors
 CORS_ALLOWED_ORIGINS = ['http://localhost:5173']
 
+
+#Configuracion tomado para los chats
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)],
+        },
+    },
+}
