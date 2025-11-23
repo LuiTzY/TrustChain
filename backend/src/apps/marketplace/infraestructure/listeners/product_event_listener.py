@@ -20,6 +20,7 @@ class ProductEventListener:
         
         self.listed_filter = self.contract.events.ItemListed.create_filter(from_block="latest")
         self.purchased_filter = self.contract.events.ItemPurchased.create_filter(from_block='latest')
+        self.cancel_filter = self.contract.events.ItemCanceled.create_filter(from_block='latest')
 
 
     def run(self):
@@ -38,6 +39,15 @@ class ProductEventListener:
                 except Exception as e:
                     print(f"Ocurrio el error de registro {e} \n")
                     continue
+            
+            for event in self.cancel_filter.get_new_entries():
+                #Buscar el producto y actualizar su estado
+                repo = DjangoProductRepository()
+                
+                product =  repo.find_by_blockchain_id(event['id'])
+                
+                repo.update_status(product.id,'cancel')
+                
                 
             for event in self.purchased_filter.get_new_entries():
                 print(f"Escuchando eventos de compra")

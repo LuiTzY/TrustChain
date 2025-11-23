@@ -49,7 +49,11 @@ class DjangoProductRepository(IProductRepositoryInterface):
 
     def update_status(self, item_id: int, new_status: str) -> ProductModel:
         item = self.find_by_id(item_id)
-        item.status = new_status
-        item.save()
+        print("Se Intentara actualizar el estatus del producto")
+        try:
+            item.status = new_status
+            item.save()
+        except Exception as e:
+            return f"Ha ocurrido este error al actualizar el producto {e}"
         return item
 

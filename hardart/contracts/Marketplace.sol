@@ -37,13 +37,11 @@ contract Marketplace {
     }
 
 
-    function cancelItem(uint _id) public {
-        Item storage item = items[_id];
-        require(item.id > 0 && item.id <= itemCount, "Item does not exist");
-        require(item.seller == msg.sender, "Solo el vendedor puede cancelar");
-        require(!item.sold, "Item ya vendido");
-        delete items[_id];
-        emit ItemCanceled(_id, msg.sender);
-    }
+    // function cancelItem(uint _id) public {
+    //     Item storage item = items[_id];
+    //     require(item.id > 0 && item.id <= itemCount, "Item does not exist");
+    //     require(!item.sold, "Item ya vendido");
+    //     emit ItemCanceled(_id, msg.sender);
+    // }
 
 }
