@@ -44,37 +44,54 @@ export default function LoginForm() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="flex flex-col gap-3 max-w-sm mx-auto w-full"
+      className="flex flex-col gap-6 max-w-md mx-auto w-full bg-gradient-to-br from-slate-800/90 to-slate-900/90 backdrop-blur-xl rounded-3xl border border-slate-700/50 p-8 shadow-2xl"
     >
-      <div className="flex flex-col gap-3">
-        <h3 className="text-[#5f5f5f] text-[0.8rem] font-medium">Usuario</h3>
+      <div className="text-center mb-4">
+        <h2 className="text-3xl font-bold text-white mb-2 tracking-tight">
+          Iniciar Sesión
+        </h2>
+        <div className="h-1 w-20 bg-gradient-to-r from-blue-500 to-purple-500 mx-auto rounded-full"></div>
+      </div>
+
+      <div className="space-y-2">
+        <label className="block text-sm font-medium text-slate-300 ml-1 font-['Orbitron']">
+          Usuario
+        </label>
         <input
           name="username"
           placeholder="Ingresa tu nombre de usuario"
           onChange={handleChange}
-          className="text-[#8e8e8e] text-[0.7rem] self-stretch w-full h-[46px] px-[19px] py-[13px] rounded-full outline-1 outline-offset-[-1px] outline-[#5f5f5f]/50 inline-flex justify-start items-center gap-2.5"
+          className="w-full bg-slate-900/50 border border-slate-700 text-white rounded-xl px-4 py-3.5 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 placeholder:text-slate-500 hover:border-slate-600 font-['Orbitron'] text-sm"
         />
       </div>
 
-      <div className="flex flex-col gap-3">
-        <h3 className="text-[#5f5f5f] text-[0.8rem] font-medium">Contraseña</h3>
+      <div className="space-y-2">
+        <label className="block text-sm font-medium text-slate-300 ml-1 font-['Orbitron']">
+          Contraseña
+        </label>
         <input
           name="password"
           type="password"
           placeholder="Introduce tu contraseña"
           onChange={handleChange}
-          className="text-[#8e8e8e] text-[0.7rem] self-stretch w-full h-[46px] px-[19px] py-[13px] rounded-full outline-1 outline-offset-[-1px] outline-[#5f5f5f]/50 inline-flex justify-start items-center gap-2.5"
+          className="w-full bg-slate-900/50 border border-slate-700 text-white rounded-xl px-4 py-3.5 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 placeholder:text-slate-500 hover:border-slate-600 font-['Orbitron'] text-sm"
         />
       </div>
 
       <button
         type="submit"
-        className="bg-[#2f45c6] text-white px-8 py-3 rounded-full font-['Orbitron'] hover:bg-[#2334a8] transition-all duration-200"
+        className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold py-4 rounded-xl hover:from-blue-700 hover:to-blue-800 transition-all duration-200 shadow-lg shadow-blue-900/30 hover:shadow-xl hover:shadow-blue-900/40 hover:-translate-y-0.5 font-['Orbitron'] uppercase tracking-wide mt-2"
       >
         Iniciar sesión
       </button>
 
-      {error && <p className="text-red-500 text-[0.7rem]">{error}</p>}
+      {error && (
+        <div className="bg-red-900/30 border border-red-800/50 rounded-xl p-3 mt-2">
+          <p className="text-red-400 text-sm text-center font-['Orbitron']">
+            {error}
+          </p>
+        </div>
+      )}
     </form>
   );
 }
