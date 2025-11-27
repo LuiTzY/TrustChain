@@ -13,7 +13,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const login = (userData: any) => {
     setUser(userData);
-    localStorage.setItem("user", JSON.stringify(userData));
   };
 
   const logout = () => {

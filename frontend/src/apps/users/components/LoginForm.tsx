@@ -4,6 +4,8 @@ import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import type { LoginCredentials } from "../types/user.types";
 
+import {decodeJwtPayload} from '../../helpers/jwt'
+
 export default function LoginForm() {
   const { login } = useAuth();
   const navigate = useNavigate(); // 👈 para redirigir
@@ -29,9 +31,10 @@ export default function LoginForm() {
 
       localStorage.setItem("accessToken", response.access);
       localStorage.setItem("refreshToken", response.refresh);
-      localStorage.setItem("user", JSON.stringify(response.user));
+      const decodedUser = await decodeJwtPayload(response.access);
+      localStorage.setItem("user", decodedUser ? JSON.stringify(decodedUser) : "");
 
-      login(response.user);
+      login(response.access);
 
       // ✅ redirige a productos
       navigate("/products");

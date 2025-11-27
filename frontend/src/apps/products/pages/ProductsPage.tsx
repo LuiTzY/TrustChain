@@ -58,6 +58,16 @@ export default function ProductsPage() {
     (p.name + " " + p.description).toLowerCase().includes(search.toLowerCase())
   );
 
+  const user = JSON.parse(JSON.parse(localStorage.getItem("user")!));
+  console.log("INfomracion del usuario", user.access)
+  // const visibleProducts = filteredProducts.filter(
+  // (p) => {
+  //   // p.user_seller.wallet_address != JSON.parse(localStorage.getItem("user")!).wallet_address
+  //   // console.log(`Este es el wallet Address del usuario activo ${user.wallet_address} este es la del producto ${p.user_seller.wallet_address}`)
+  //   // console.log(p.user_seller.wallet_address != user.wallet_address)
+  // })
+  
+
   if (loading) {
     return (
       <p className="text-center mt-10 text-gray-500">Cargando productos...</p>

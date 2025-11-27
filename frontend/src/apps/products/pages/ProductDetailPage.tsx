@@ -17,7 +17,7 @@ export default function ProductDetailPage() {
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 flex items-center justify-center p-6">
   <div className="max-w-2xl w-full bg-gradient-to-br from-slate-800/90 to-slate-900/90 backdrop-blur-xl rounded-3xl border border-slate-700/50 overflow-hidden shadow-2xl">
     <img 
-      src={product.image} 
+      src={product.image_url} 
       alt={product.name} 
       className="w-full h-80 object-cover" 
     />
