@@ -9,4 +9,4 @@ class ProductSerializer(serializers.ModelSerializer):
     blockchain_id =  serializers.IntegerField(read_only=True)
     class Meta:
         model =  ProductModel
-        fields = ('id','blockchain_id','name','description','price','user_seller','user_buyer')
+        fields = ('id','blockchain_id','name','image_url','description','price','user_seller','user_buyer')

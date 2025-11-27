@@ -41,11 +41,10 @@ OWN_APPS = [
 INSTALLED_APPS = DEFAULT_APPS + THIRD_APPS + OWN_APPS
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -170,7 +169,8 @@ CELERY_BEAT_SCHEDULE = {
 }
 
 #CONFIG DEL CORS para permitir solicitudes del cors
-CORS_ALLOWED_ORIGINS = ['http://localhost:5173']
+CORS_ALLOWED_ORIGINS = ["http://localhost:5173",]
+CSRF_TRUSTED_ORIGINS = ["http://localhost:5173"]
 
 
 #Configuracion tomado para los chats
