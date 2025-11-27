@@ -14,7 +14,7 @@ export default function ProductCard({
   name,
   description,
   price,
-  image,
+  image_url,
   role = "buyer",
   onDelete,
   onBuy,
@@ -45,7 +45,7 @@ export default function ProductCard({
 
   {/* 🔸 Imagen */}
   <img
-    src={image || "https://via.placeholder.com/200x200?text=Producto"}
+    src={image_url || "https://via.placeholder.com/200x200?text=Producto"}
     alt={name}
     className="w-full h-48 object-cover rounded-xl mb-4 group-hover:scale-105 transition-transform duration-500 relative z-0"
   />
@@ -57,7 +57,7 @@ export default function ProductCard({
         {name}
       </h3>
       <p className="text-slate-300 text-lg font-bold">
-        ${price.toFixed(2)}
+        ${price}
       </p>
     </div>
 

@@ -14,7 +14,7 @@ export default function ProductForm({ initialData = {}, onSubmit, buttonLabel }:
     description: initialData.description || "",
     price: initialData.price || 0,
     stock: initialData.stock || 0,
-    image: initialData.image || "",
+    image_url: initialData.image_url || "",
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -115,7 +115,7 @@ export default function ProductForm({ initialData = {}, onSubmit, buttonLabel }:
             <input
               name="image"
               placeholder="https://ejemplo.com/imagen.jpg"
-              value={form.image}
+              value={form.image_url}
               onChange={handleChange}
               className="w-full bg-slate-900/50 border border-slate-700 text-white rounded-xl px-4 py-3.5 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 placeholder:text-slate-500 hover:border-slate-600"
             />

@@ -1,25 +1,19 @@
 import axios from "axios";
 import type { LoginCredentials, RegisterData } from "../types/user.types.ts";
-import usersData from "../Prueba/users.json";
 
-const API_URL = "/api";
+const API_URL = "http://localhost:8000/api";
 
 export const loginUser = async (credentials: LoginCredentials) => {
-  // const { data } = await axios.post(`${API_URL}/auth/login/`, credentials);
-  // return data;
-  const user = usersData.find(
-    (u) =>
-      u.username === credentials.username &&
-      u.password === credentials.password
-  );
+  const { data } : any = await axios.post(`${API_URL}/auth/login/`, credentials);
+  
+  
 
-  if (!user) throw new Error("Credenciales inválidas");
+  if (!data) throw new Error("Credenciales inválidas");
 
   // Simular token
   return {
-    access: "mock-access-token-" + user.id,
-    refresh: "mock-refresh-token-" + user.id,
-    user,
+    access: data.access,
+    refresh: data.refresh
   };
 };
 
