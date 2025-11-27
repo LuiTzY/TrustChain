@@ -21,59 +21,75 @@ export default function ProductCard({
   onAddToCart,
 }: ProductCardProps) {
   return (
-    <div className="relative bg-white rounded-xl shadow-md p-4 flex flex-col items-center text-center hover:shadow-lg transition">
-      {/* 🔹 Controles de CRUD arriba a la derecha */}
-      {role === "seller" && (
-        <div className="absolute top-3 right-3 flex gap-2">
-          <Link
-            to={`/products/edit/${id}`}
-            className="bg-yellow-400 text-white p-2 rounded-full hover:bg-yellow-500 transition"
-            title="Editar producto"
-          >
-            <Edit size={16} />
-          </Link>
-          <button
-            onClick={() => onDelete?.(id)}
-            className="bg-red-500 text-white p-2 rounded-full hover:bg-red-600 transition"
-            title="Eliminar producto"
-          >
-            <Trash2 size={16} />
-          </button>
-        </div>
-      )}
+    <div className="group relative z-10 bg-gradient-to-br from-slate-800/90 to-slate-900/90 backdrop-blur-xl rounded-2xl overflow-hidden border border-slate-700/50 hover:border-blue-500/50 transition-all duration-300 hover:shadow-2xl hover:shadow-blue-900/20 hover:-translate-y-1 p-5">
 
-      {/* 🔸 Imagen del producto */}
-      <img
-        src={image || "https://via.placeholder.com/200x200?text=Producto"}
-        alt={name}
-        className="w-full h-48 object-cover rounded-lg mb-3"
-      />
-
-      {/* 🔸 Información */}
-      <h3 className="text-lg font-semibold text-gray-800">{name}</h3>
-      <p className="text-sm text-gray-500 mb-2 line-clamp-2">{description}</p>
-      <p className="text-blue-600 font-bold mb-4">${price}</p>
-
-      {/* 🔹 Botones de acción para comprador */}
-      <div className="flex gap-2">
-        <button
-          onClick={() => onAddToCart?.(id)}
-          className="bg-gray-800 text-white px-3 py-2 text-sm rounded hover:bg-gray-900 transition"
-        >
-          Guardar
-        </button>
-        <button
-          onClick={() => onBuy?.(id)}
-          className="bg-blue-600 text-white px-3 py-2 text-sm rounded hover:bg-blue-700 transition"
-        >
-          Comprar
-        </button>
-      </div>
+  {/* 🔹 Controles CRUD arriba a la derecha */}
+  {role === "seller" && (
+    <div className="absolute z-20 top-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+      <Link
+        to={`/products/edit/${id}`}
+        className="p-2.5 bg-slate-900/80 backdrop-blur-sm rounded-full hover:bg-amber-500 transition-all duration-200 border border-slate-700/50 text-white"
+        title="Editar producto"
+      >
+        <Edit size={16} />
+      </Link>
+      <button
+        onClick={() => onDelete?.(id)}
+        className="p-2.5 bg-slate-900/80 backdrop-blur-sm rounded-full hover:bg-red-600 transition-all duration-200 border border-slate-700/50 text-white"
+        title="Eliminar producto"
+      >
+        <Trash2 size={16} />
+      </button>
     </div>
+  )}
+
+  {/* 🔸 Imagen */}
+  <img
+    src={image || "https://via.placeholder.com/200x200?text=Producto"}
+    alt={name}
+    className="w-full h-48 object-cover rounded-xl mb-4 group-hover:scale-105 transition-transform duration-500 relative z-0"
+  />
+
+  {/* 🔸 Información */}
+  <div className="flex gap-2 items-start mb-4">
+    <div className="w-1/2">
+      <h3 className="text-white text-base font-semibold leading-tight mb-2 group-hover:text-blue-400 transition-colors">
+        {name}
+      </h3>
+      <p className="text-slate-300 text-lg font-bold">
+        ${price.toFixed(2)}
+      </p>
+    </div>
+
+    <Link
+      to={`/products/${id}`}
+      className="text-sm text-blue-400 hover:text-blue-300 underline w-1/2 text-right transition-colors"
+    >
+      Ver más
+    </Link>
+  </div>
+
+  {/* 🔹 Botones de compra */}
+  <div className="flex flex-col w-full gap-2">
+    <button
+      onClick={() => onBuy?.(id)}
+      className="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-8 py-3 text-xs rounded-xl font-['Orbitron'] hover:from-blue-700 hover:to-blue-800 transition-all duration-200 shadow-lg shadow-blue-900/30 uppercase tracking-wide"
+    >
+      COMPRAR CON CRIPTO
+    </button>
+
+    <button
+      onClick={() => onAddToCart?.(id)}
+      className="bg-slate-800/50 border border-slate-700 text-slate-300 px-8 py-3 text-xs rounded-xl font-['Orbitron'] hover:bg-slate-700/50 hover:border-slate-600 transition-all duration-200 uppercase tracking-wide"
+    >
+      AGREGAR AL CARRITO
+    </button>
+  </div>
+
+</div>
+
   );
 }
-
-
 
 // export default function ProductCard({
 //   id,
