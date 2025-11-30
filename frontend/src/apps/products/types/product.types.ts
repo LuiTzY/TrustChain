@@ -9,6 +9,6 @@ export interface Product {
   image_url?: string;
   created_at?: string;
   updated_at?: string;
-  user_seller: User
+  user_seller?: User
 }
 
