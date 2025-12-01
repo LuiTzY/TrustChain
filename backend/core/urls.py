@@ -8,8 +8,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path(f'{API_BASE_PREFIX}/{API_MARKETPLACE_PREFIX}/', include('src.apps.marketplace.infraestructure.urls.products')),
     path(f'{API_BASE_PREFIX}/{API_MARKETPLACE_PREFIX}/', include('src.apps.marketplace.infraestructure.urls.payments')),
-    path(f'{API_BASE_PREFIX}/', include('src.apps.marketplace.infraestructure.urls.users'))
-    
+    path(f'{API_BASE_PREFIX}/', include('src.apps.marketplace.infraestructure.urls.users')),
+    path(f'{API_BASE_PREFIX}/{API_MARKETPLACE_PREFIX}/dashboard/', include('src.apps.marketplace.infraestructure.urls.dashboard'))
 ]
 
 

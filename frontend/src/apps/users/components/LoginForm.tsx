@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { loginUser } from "../api/auth.api";
-import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
-import type { LoginCredentials } from "../types/user.types";
-
-import {decodeJwtPayload} from '../../helpers/jwt'
+import { LoginCredentials } from "../types/user.types";
+import { loginUser } from "@/api/api";
+import { decodeJwtPayload } from "@/helpers/jwt";
+import { useAuth } from "../context/AuthContext";
+import { useToast } from "@/hooks/use-toast";
 
 export default function LoginForm() {
   const { login } = useAuth();
@@ -17,6 +17,8 @@ export default function LoginForm() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) =>
     setForm({ ...form, [e.target.name]: e.target.value });
+  
+  const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,8 +38,14 @@ export default function LoginForm() {
 
       login(response.access);
 
+       toast({
+        title: "Inicio de sesión",
+        description: "Haz iniciado sesion correctamente",
+        className: "bg-green-500 text-white border-green-600",
+        
+      });
       // ✅ redirige a productos
-      navigate("/products");
+      navigate("/dashboard");
     } catch (error) {
       console.error(error);
       setError("Credenciales inválidas o error de servidor.");

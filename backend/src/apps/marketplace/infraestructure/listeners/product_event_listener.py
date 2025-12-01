@@ -15,7 +15,6 @@ class ProductEventListener:
         
         with open(HARDHAT_ABI_PATH) as f:
             abi = json.load(f)["abi"]
-        print("Este es el AVI")
         self.contract = self.w3.eth.contract(address=contract_address, abi=abi)
         
         self.listed_filter = self.contract.events.ItemListed.create_filter(from_block="latest")

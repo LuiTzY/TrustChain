@@ -169,8 +169,8 @@ CELERY_BEAT_SCHEDULE = {
 }
 
 #CONFIG DEL CORS para permitir solicitudes del cors
-CORS_ALLOWED_ORIGINS = ["http://localhost:5173",]
-CSRF_TRUSTED_ORIGINS = ["http://localhost:5173"]
+CORS_ALLOWED_ORIGINS = ["http://localhost:5173","http://localhost:8080"]
+CSRF_TRUSTED_ORIGINS = ["http://localhost:5173","http://localhost:8080"]
 
 
 #Configuracion tomado para los chats

@@ -45,6 +45,9 @@ class DjangoUserRepository(IUserRepository):
         except Exception as e :
             raise UserUnknownError(f"Ocurrio un error inesperado {e}")
 
+    def get_count(self)-> int:
+        return UserModel.objects.count()
+    
 class Web3UserRepository(IWeb3UserRepository):
     
     def __init__(self):

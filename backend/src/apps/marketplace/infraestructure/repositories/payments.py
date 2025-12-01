@@ -33,5 +33,8 @@ class DjangoPaymentRepository(IPaymentRepository):
         
     def list_all(self) -> list[PaymentModel] :
         return PaymentModel.objects.all()
+    
+    def get_count(self)-> int:
+        return PaymentModel.objects.count()
 
   
