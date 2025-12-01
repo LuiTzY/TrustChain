@@ -1,12 +1,10 @@
 import axios from "axios";
-import type { LoginCredentials, RegisterData } from "../types/user.types.ts";
+import type { LoginCredentials, RegisterData, User } from "../types/user.types.ts";
 
 const API_URL = "http://localhost:8000/api";
 
 export const loginUser = async (credentials: LoginCredentials) => {
   const { data } : any = await axios.post(`${API_URL}/auth/login/`, credentials);
-  
-  
 
   if (!data) throw new Error("Credenciales inválidas");
 
@@ -30,5 +28,18 @@ export const getAuthHeaders = () => {
     },
   };
 };
+
+export const getUserById = async (id: number): Promise<User> => {
+  const res = await axios.get(`${API_URL}${id}/user/`);
+  return res.data;
+};
+
+export const updateUser = async (id: number, user: Partial<User>): Promise<User> => {
+  const res = await axios.put(`${API_URL}${id}/user/`, user);
+  return res.data;
+};
+
+
+
 
 

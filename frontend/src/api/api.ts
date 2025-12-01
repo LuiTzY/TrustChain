@@ -34,8 +34,6 @@ export const getAuthHeaders = () => {
 };
 
 
-
-
 const BASE_URL = "http://localhost:8000"
 
 export const apiClient = async <T>(
