@@ -10,12 +10,10 @@ class UserEthersBalance:
         self.web3_user_repository = Web3UserRepository()
     
     def get_user_balance(self, user: UserModel):
-        
         wallet: UserModel = self.repository.get_by_wallet(user.wallet_address)
         
         if not wallet:
             raise UserNotFoundWallet()
         
         user_balance = self.web3_user_repository.get_wallet_balance(wallet.wallet_address)
-        print(f"Este es el user balance {user_balance}")
         return user_balance

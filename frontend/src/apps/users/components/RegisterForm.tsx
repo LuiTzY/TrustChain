@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { registerUser } from "../api/auth.api";
-import type { RegisterData } from "../types/user.types";
+import { RegisterData } from "../types/user.types";
+import { registerUser } from "@/api/api";
+import { useToast } from "@/hooks/use-toast";
 
 export default function RegisterForm() {
   const [form, setForm] = useState<RegisterData>({
@@ -18,14 +19,27 @@ export default function RegisterForm() {
 
   const handleNext = () => setStep((prev) => prev + 1);
   const handlePrev = () => setStep((prev) => prev - 1);
+  const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await registerUser(form);
-      alert("Usuario registrado correctamente");
-    } catch {
-      alert("Error al registrar usuario");
+      const data = await registerUser(form);
+      console.log(data)
+       toast({
+        title: `Registro Exitoso ${data.username}`,
+        description: `Esta es tu walletAddress:${data.wallet_address} `,
+        className: "bg-green-500 text-white border-green-600",
+        
+      });
+    } catch(error) {
+        toast({
+        title: `Error al iniciar sesion`,
+        description: `Ocurrio esto al hacer la solicitud: ${error.response.data.message}`,
+        className: "bg-red-500 text-white border-red-600",
+      });
+      console.log("Este es el error", error)
+      // alert("Error al registrar usuario");
     }
   };
 

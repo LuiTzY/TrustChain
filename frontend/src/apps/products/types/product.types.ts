@@ -4,7 +4,7 @@ export interface Product {
   id: number;
   name: string;
   description: string;
-  price: number;
+  price: string;
   stock: number;
   image_url?: string;
   created_at?: string;
@@ -12,3 +12,4 @@ export interface Product {
   user_seller: User
 }
 
+  

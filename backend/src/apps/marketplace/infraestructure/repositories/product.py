@@ -57,3 +57,8 @@ class DjangoProductRepository(IProductRepositoryInterface):
             return f"Ha ocurrido este error al actualizar el producto {e}"
         return item
 
+    def get_count(self)-> int:
+        return ProductModel.objects.count()
+    
+    def get_seller_count(self)-> int:
+        return ProductModel.objects.filter(status="selled").count()

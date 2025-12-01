@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import RegisterForm from "../components/RegisterForm";
-import img from "../../../../public/Frame.png";
+import img from "../../../assets/Frame.png";
 
 export default function RegisterPage() {
   return (
