@@ -6,6 +6,12 @@ import { useState } from "react";
 import nft1 from "@/assets/nft-1.png";
 import { PurchaseDialog } from "@/components/PurchaseDialog";
 import { ChatDialog } from "@/components/ChatDialog";
+import { useQuery } from "@tanstack/react-query";
+import { ProductService } from "@/services/product";
+import { Loader } from "@/components/ui/loader";
+import { formatEther } from "ethers";
+import { blockchain_service } from "@/services/blockchain";
+import { useAuth } from "@/apps/users/context/AuthContext";
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -13,21 +19,35 @@ const ProductDetail = () => {
   const [isPurchaseOpen, setIsPurchaseOpen] = useState(false);
   const [isChatOpen, setIsChatOpen] = useState(false);
 
-  const productTitle = "Cyberpunk Cityscape NFT";
-  const productPrice = "2.5 ETH";
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["product", id],
+    queryFn: () => ProductService.getProductById(id),
+  });
+
+
+  const blockchainQuery = useQuery({
+    queryKey:["blockchain-info"],
+    queryFn: blockchain_service.getBlockchainInfo
+  })
+
+  const {user} = useAuth();
+
+  if (isLoading) return <Loader loading={isLoading} message="Cargando producto..." />;
 
   return (
     <>
       <PurchaseDialog
         open={isPurchaseOpen}
         onOpenChange={setIsPurchaseOpen}
-        productTitle={productTitle}
-        productPrice={productPrice}
+        productTitle={data.name}
+        productPrice={data.price}
       />
       <ChatDialog
+        productId={data.id}
+        userId="1"
         open={isChatOpen}
         onOpenChange={setIsChatOpen}
-        productTitle={productTitle}
+        productTitle={data.name}
       />
       <div className="min-h-screen flex">
       <Sidebar />
@@ -47,7 +67,7 @@ const ProductDetail = () => {
             {/* Image */}
             <div className="glass-card rounded-3xl overflow-hidden p-8">
               <img
-                src={nft1}
+                src={data.image_url ? data.image_url : "https://img.freepik.com/free-vector/illustration-gallery-icon_53876-27002.jpg?semt=ais_hybrid&w=740&q=80"} 
                 alt="Product"
                 className="w-full h-auto rounded-2xl"
               />
@@ -57,20 +77,20 @@ const ProductDetail = () => {
             <div className="space-y-6">
               <div>
                 <span className="px-3 py-1 rounded-full text-xs font-semibold bg-primary text-primary-foreground">
-                  NFT
+                  Producto {data.id}
                 </span>
                 <h1 className="text-4xl font-bold mt-4 mb-2">
-                  Cyberpunk Cityscape NFT
+                  {data.name}
                 </h1>
                 <p className="text-muted-foreground">
-                  Colección exclusiva de arte digital futurista certificada en blockchain
+                  {data.description}
                 </p>
               </div>
 
               <div className="glass-card rounded-2xl p-6">
                 <p className="text-sm text-muted-foreground mb-2">Precio actual</p>
-                <p className="text-4xl font-bold gradient-primary bg-clip-text text-transparent mb-4">
-                  2.5 ETH
+                <p className="text-4xl font-bold mb-4">
+                  {formatEther(data.price)}
                 </p>
                 <div className="flex gap-3">
                   <Button 
@@ -104,11 +124,15 @@ const ProductDetail = () => {
                 <div className="space-y-3 text-sm">
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Contrato</span>
-                    <span className="font-mono text-primary">0x742d...a8c9</span>
+                    <span className="font-mono text-primary">
+                      { blockchainQuery ?
+                      blockchainQuery.data.data.marketplace_address
+                      : "Cargando informacion del contrato"}
+                    </span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Token ID</span>
-                    <span className="font-mono">#1234</span>
+                    <span className="text-muted-foreground">Estatus</span>
+                    <span className="font-mono">Sincronizado</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Blockchain</span>
@@ -135,11 +159,7 @@ const ProductDetail = () => {
                   Descripción
                 </h3>
                 <p className="text-muted-foreground leading-relaxed">
-                  Esta pieza de arte digital única representa el futuro de las ciudades 
-                  interconectadas a través de la tecnología blockchain. Cada elemento ha sido 
-                  cuidadosamente diseñado para capturar la esencia de un mundo descentralizado 
-                  y transparente. La propiedad está verificada en la blockchain de Ethereum, 
-                  garantizando su autenticidad y unicidad.
+                 {data.description}
                 </p>
               </div>
             </div>

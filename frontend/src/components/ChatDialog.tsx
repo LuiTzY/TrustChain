@@ -9,12 +9,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Send } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 
 interface Message {
   id: string;
   text: string;
-  sender: "user" | "seller";
+  isMe: boolean;
   timestamp: Date;
 }
 
@@ -22,66 +22,97 @@ interface ChatDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   productTitle: string;
+  productId: number;
+  userId: string;
 }
 
-export const ChatDialog = ({ open, onOpenChange, productTitle }: ChatDialogProps) => {
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: "1",
-      text: "¡Hola! ¿En qué puedo ayudarte con este producto?",
-      sender: "seller",
-      timestamp: new Date(),
-    },
-  ]);
+export const ChatDialog = ({
+  open,
+  onOpenChange,
+  productTitle,
+  productId,
+  userId,
+}: ChatDialogProps) => {
+  const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState("");
+  const ws = useRef<WebSocket | null>(null);
 
+  const chatRoomId = `chat_${productId}`;
+
+  useEffect(() => {
+    if (!open) return;
+
+    ws.current = new WebSocket(`ws://localhost:8000/api/chat/`);
+
+    //Mensaje enviado al server al momento de conectarse
+    ws.current.onopen = () => {
+      ws.current?.send(JSON.stringify({
+        type: "join",
+        chatRoomId,
+        userId,
+      }));
+    };
+
+    //Accion a ejecutarse al momento de recibir un mensaje 
+    ws.current.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      console.log()
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: data.id,
+          text: data.text,
+          isMe: data.userId === userId,
+          timestamp: new Date(),
+        },
+      ]);
+    };
+
+    return () => {
+      ws.current?.close();
+      setMessages([]); // Limpiar mensajes al cerrar
+    };
+  }, [open, chatRoomId, userId]);
+
+  //Funcion para el envio de mensajes
   const handleSendMessage = () => {
     if (!newMessage.trim()) return;
 
-    const userMessage: Message = {
-      id: Date.now().toString(),
-      text: newMessage,
-      sender: "user",
-      timestamp: new Date(),
-    };
+    ws.current?.send(
+      JSON.stringify({
+        type: "message",
+        chatRoomId,
+        userId,
+        text: newMessage,
+      })
+    );
 
-    setMessages([...messages, userMessage]);
     setNewMessage("");
-
-    // Simulación de respuesta automática
-    setTimeout(() => {
-      const sellerResponse: Message = {
-        id: (Date.now() + 1).toString(),
-        text: "Gracias por tu mensaje. El vendedor responderá pronto.",
-        sender: "seller",
-        timestamp: new Date(),
-      };
-      setMessages((prev) => [...prev, sellerResponse]);
-    }, 1000);
   };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-lg glass-card border-primary/20 h-[600px] flex flex-col">
         <DialogHeader>
-          <DialogTitle className="text-xl gradient-primary bg-clip-text text-transparent">
-            Chat con el vendedor
-          </DialogTitle>
-          <DialogDescription className="text-sm">
-            {productTitle}
-          </DialogDescription>
+          <DialogTitle className="text-xl">Chat sobre el producto</DialogTitle>
+          <DialogDescription className="text-sm">{productTitle}</DialogDescription>
         </DialogHeader>
 
         <ScrollArea className="flex-1 pr-4">
           <div className="space-y-4">
+            {messages.length === 0 && (
+              <div className="text-center text-muted-foreground text-sm py-8">
+                Inicia la conversación
+              </div>
+            )}
             {messages.map((message) => (
               <div
                 key={message.id}
-                className={`flex ${message.sender === "user" ? "justify-end" : "justify-start"}`}
+                className={`flex ${message.isMe ? "justify-end" : "justify-start"}`}
               >
                 <div
                   className={`max-w-[80%] rounded-2xl px-4 py-2 ${
-                    message.sender === "user"
+                    message.isMe
                       ? "bg-primary text-primary-foreground"
                       : "glass-card border border-border"
                   }`}
@@ -107,10 +138,7 @@ export const ChatDialog = ({ open, onOpenChange, productTitle }: ChatDialogProps
             onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
             className="flex-1"
           />
-          <Button
-            onClick={handleSendMessage}
-            className="gradient-primary hover:opacity-90 transition-opacity"
-          >
+          <Button onClick={handleSendMessage} className="gradient-primary hover:opacity-90">
             <Send className="w-4 h-4" />
           </Button>
         </div>

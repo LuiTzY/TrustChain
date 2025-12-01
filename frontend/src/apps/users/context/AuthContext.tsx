@@ -18,7 +18,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true); // importante
   const navigate = useNavigate();
   const {toast} =  useToast();
-
   const login = (userData: any) => {
     setUser(userData);
   };

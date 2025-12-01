@@ -8,7 +8,7 @@ import RegisterPage from "@/apps/users/pages/RegisterPage";
 import Dashboard from "@/pages/Dashboard";
 import Login from "@/pages/Login";
 import NotFound from "@/pages/NotFound";
-import ProductDetail from "@/pages/ProductDetail";
+import ProductDetail from "@/apps/products/pages/ProductDetail";
 import { Wallet } from "lucide-react";
 import { useAuth } from "@/apps/users/context/AuthContext";
 
