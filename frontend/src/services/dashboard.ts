@@ -12,7 +12,6 @@ interface DashboardInsigths {
 }
 export const DashboardService = {
   getInsights: () => { 
-    console.log("Se esta ejecutando GETALL")
     return apiClient<APIGeneralResponse<DashboardInsigths>>("GET", `${API_DASHBOARD_URL}insights`)
   },
   

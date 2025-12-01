@@ -14,3 +14,4 @@ class InsightsApiView(GenericJwtAPIView):
         service = GetInsigthsService(repo)
          
         return ApiResponse.success(data=service.execute(),message="Insights Data")
+
