@@ -1,4 +1,3 @@
-// Función para decodificar el payload de un JWT
 export const decodeJwtPayload = async (token: string) =>  {
   if (!token) {
     return null;
@@ -30,3 +29,4 @@ export const decodeJwtPayload = async (token: string) =>  {
     return { error: 'Token inválido o malformado.' };
   }
 };
+
