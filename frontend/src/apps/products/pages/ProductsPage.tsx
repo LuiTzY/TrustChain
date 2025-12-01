@@ -1,19 +1,22 @@
 import { useEffect, useState } from "react";
 import { getAllProducts, deleteProduct } from "../api/products.api";
+import { buyProductWithCrypto } from "../../payments/api/payments.api";
+import ConfirmPurchaseModal from "../../payments/components/ConfirmPurchaseModal";
 import type { Product } from "../types/product.types";
 import ProductCard from "../components/ProductCard";
 import { Link } from "react-router-dom";
-
 
 export default function ProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [modalOpen, setModalOpen] = useState(false);
 
-  // 🔹 Cargar productos desde API o Mock
+  // 🔹 Cargar productos desde API
   const fetchProducts = async () => {
     try {
-      const data = await getAllProducts(); 
+      const data = await getAllProducts();
       console.log("Productos cargados:", data);
       setProducts(data);
     } catch (error) {
@@ -30,17 +33,32 @@ export default function ProductsPage() {
 
     try {
       await deleteProduct(id);
-      alert("Producto eliminado correctamente ");
-      fetchProducts(); // recarga la lista
+      alert("Producto eliminado correctamente ✅");
+      fetchProducts(); // recarga lista
     } catch (error) {
       console.error("Error eliminando producto:", error);
-      alert("No se pudo eliminar el producto ");
+      alert("No se pudo eliminar el producto ❌");
     }
   };
 
   // 🔹 Acciones de botones
-  const handleBuy = (id: number) => {
-    alert(`🛒 Comprar producto con ID ${id}`);
+  const handleBuyClick = (id: number) => {
+    const product = products.find((p) => p.id === id);
+    setSelectedProduct(product || null);
+    setModalOpen(true);
+  };
+
+  const handleConfirmPurchase = async () => {
+    if (!selectedProduct) return;
+    try {
+      const response = await buyProductWithCrypto(selectedProduct.id);
+      alert(response.message || "Compra realizada con éxito ✅");
+    } catch (error) {
+      console.error("Error en la compra:", error);
+      alert("No se pudo procesar la compra ❌");
+    } finally {
+      setModalOpen(false);
+    }
   };
 
   const handleAddToCart = (id: number) => {
@@ -51,28 +69,15 @@ export default function ProductsPage() {
     fetchProducts();
   }, []);
 
-  // =====================================================
-  // 🔍 FILTRAR PRODUCTOS (nombre + descripción)
-  // =====================================================
+  // 🔍 Filtro
   const filteredProducts = products.filter((p) =>
-    (p.name + " " + p.description).toLowerCase().includes(search.toLowerCase())
+    (p.name + " " + p.description)
+      .toLowerCase()
+      .includes(search.toLowerCase())
   );
 
-  const user = JSON.parse(JSON.parse(localStorage.getItem("user")!));
-  console.log("INfomracion del usuario", user.access)
-  // const visibleProducts = filteredProducts.filter(
-  // (p) => {
-  //   // p.user_seller.wallet_address != JSON.parse(localStorage.getItem("user")!).wallet_address
-  //   // console.log(`Este es el wallet Address del usuario activo ${user.wallet_address} este es la del producto ${p.user_seller.wallet_address}`)
-  //   // console.log(p.user_seller.wallet_address != user.wallet_address)
-  // })
-  
-
-  if (loading) {
-    return (
-      <p className="text-center mt-10 text-gray-500">Cargando productos...</p>
-    );
-  }
+  if (loading)
+    return <p className="text-center mt-10 text-gray-500">Cargando productos...</p>;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 p-6 md:p-8">
@@ -108,7 +113,7 @@ export default function ProductsPage() {
           </Link>
         </div>
 
-        {/* 🔍 SEARCH BAR */}
+        {/* Search bar */}
         <div className="mb-8">
           <div className="relative max-w-2xl">
             <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
@@ -160,19 +165,6 @@ export default function ProductsPage() {
         {filteredProducts.length === 0 ? (
           <div className="text-center py-20">
             <div className="bg-slate-800/50 backdrop-blur-xl rounded-3xl border border-slate-700/50 p-12 max-w-md mx-auto">
-              <svg
-                className="w-20 h-20 text-slate-600 mx-auto mb-4"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={1.5}
-                  d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"
-                />
-              </svg>
               <h3 className="text-xl font-semibold text-white mb-2">
                 No se encontraron productos
               </h3>
@@ -182,18 +174,28 @@ export default function ProductsPage() {
             </div>
           </div>
         ) : (
-          <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {filteredProducts.map((product) => (
-              <ProductCard
-                key={product.id}
-                {...product}
-                role="seller"
-                onDelete={handleDelete}
-                onBuy={handleBuy}
-                onAddToCart={handleAddToCart}
-              />
-            ))}
-          </div>
+          <>
+            <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              {filteredProducts.map((product) => (
+                <ProductCard
+                  key={product.id}
+                  {...product}
+                  role="seller"
+                  onDelete={handleDelete}
+                  onBuy={handleBuyClick}
+                  onAddToCart={handleAddToCart}
+                />
+              ))}
+            </div>
+
+            {/* Modal de confirmación */}
+            <ConfirmPurchaseModal
+              isOpen={modalOpen}
+              onClose={() => setModalOpen(false)}
+              onConfirm={handleConfirmPurchase}
+              productName={selectedProduct?.name}
+            />
+          </>
         )}
       </div>
     </div>
