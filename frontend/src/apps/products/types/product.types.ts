@@ -13,3 +13,15 @@ export interface Product {
 }
 
   
+
+export interface Pays {
+  id: number;
+  tx_hash: string;
+  buyer_address: string;
+  seller_address: string;
+  amout: number;
+  status: string;
+  confirmed_at?: Date
+  product_info: Product 
+  created_at: Date
+}

@@ -161,6 +161,7 @@ export const UserEditModal = ({
                 }
                 className="pl-10 bg-background/50 border-border font-mono text-sm"
                 placeholder="0x..."
+                disabled
               />
             </div>
             <p className="text-xs text-muted-foreground">

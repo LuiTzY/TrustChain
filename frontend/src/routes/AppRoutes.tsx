@@ -9,8 +9,14 @@ import Dashboard from "@/pages/Dashboard";
 import Login from "@/pages/Login";
 import NotFound from "@/pages/NotFound";
 import ProductDetail from "@/apps/products/pages/ProductDetail";
-import { Wallet } from "lucide-react";
+import { User, Wallet } from "lucide-react";
 import { useAuth } from "@/apps/users/context/AuthContext";
+import Profile from "@/apps/users/pages/ProfilePage";
+import { ProtectedRoute } from "@/components/ProtectedRoute";
+import { Transaction } from "ethers";
+import Transactions from "@/apps/payments/pages/Transaction";
+import UserWallet from "@/apps/users/pages/Wallet";
+import WalletU from "@/pages/Wallet";
 
 
 const queryClient = new QueryClient();
@@ -28,6 +34,23 @@ const App = () =>  {
           <Route path="/" element={<Login/> } />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
+           <Route
+            path="/profile"
+            element={
+              <ProtectedRoute>
+                <Profile />
+              </ProtectedRoute>
+            }
+          />
+           <Route
+            path="/transactions"
+            element={
+              <ProtectedRoute>
+                <Transactions />
+              </ProtectedRoute>
+            }
+          />
+          
           <Route
             path="/dashboard"
             element={isAuthenticated ? <Dashboard /> : <Navigate to="/login" />}
@@ -38,7 +61,7 @@ const App = () =>  {
             element={<Dashboard /> }
           />     */}
           <Route path="/product/:id" element={<ProductDetail />} />
-          <Route path="/wallet" element={<Wallet />} />
+          <Route path="/wallet" element={<WalletU />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
     </TooltipProvider>

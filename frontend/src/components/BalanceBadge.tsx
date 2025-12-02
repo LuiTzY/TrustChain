@@ -12,7 +12,6 @@ export const BalanceBadge = () => {
 
     const balance = data?.data ?? null;
 
-    console.log("Esta es la data",data)
   return (
     <div className="fixed top-6 right-6 z-50 animate-fade-in">
       <div className="glass-card rounded-2xl p-4 flex items-center gap-3 hover:shadow-[0_0_30px_rgba(42,56,255,0.3)] transition-all">
