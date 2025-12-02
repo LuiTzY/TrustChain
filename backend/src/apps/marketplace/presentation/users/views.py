@@ -40,7 +40,39 @@ class UserViewSet(GenericJwtViewSet):
         
         return ApiResponse.error(errors=serializer.errors)
 
-
+    def update(self, request, pk=None, *args, **kwargs):
+        print(f"Esta es la data entrante {request.data}")
+        try:
+            # Obtener el usuario a actualizar
+            user = self.repo.find_by_id(pk)
+            
+            # partial=True permite actualizar solo los campos enviados
+            partial = kwargs.pop('partial', request.method == 'PATCH')
+            
+            serializer = UserSerializer(
+                user, 
+                data=request.data, 
+                partial=partial
+            )
+            
+            if serializer.is_valid():
+                # Si hay un servicio de actualización, úsalo
+                # Si no, actualiza directamente
+                updated_user = serializer.save()
+                
+                response_serializer = UserSerializer(updated_user)
+                return ApiResponse.success(
+                    data=response_serializer.data,
+                    message="Usuario actualizado correctamente"
+                )
+            
+            return ApiResponse.error(errors=serializer.errors)
+            
+        except UserModel.DoesNotExist:
+            return ApiResponse.error(
+                message="Usuario no encontrado",
+                code=status.HTTP_404_NOT_FOUND
+            )
 
 
 class UserBalanceView(GenericJwtAPIView):

@@ -36,5 +36,8 @@ class DjangoPaymentRepository(IPaymentRepository):
     
     def get_count(self)-> int:
         return PaymentModel.objects.count()
+    
+    def get_recent_payments(self,user_wallet_address)->list[PaymentModel]:
+        return PaymentModel.objects.filter(buyer_address=user_wallet_address).order_by('-created_at')
 
   
