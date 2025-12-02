@@ -1,12 +1,13 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import { User } from "../types/user.types";
 import { UserService } from "@/services/user";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 
 interface AuthContextType {
   user: any;
   isAuthenticated: boolean;
+  loading: boolean;
   login: (userData: any) => void;
   logout: () => void;
 }
@@ -15,72 +16,101 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<any>(null);
-  const [loading, setLoading] = useState(true); // importante
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-  const {toast} =  useToast();
+  const location = useLocation();
+  const { toast } = useToast();
+
+  // ---------------------------------------------------------
+  // Login - Redirige a donde el usuario quería ir
+  // ---------------------------------------------------------
   const login = (userData: any) => {
     setUser(userData);
+    
+    // Obtener la ruta de origen o ir al dashboard
+    const from = location.state?.from?.pathname || "/dashboard";
+    
+    toast({
+      title: "Bienvenido",
+      description: "Has iniciado sesión correctamente",
+      className: "bg-green-500 text-white border-green-600",
+    });
+    
+    // Redirigir
+    navigate(from, { replace: true });
   };
 
+  // ---------------------------------------------------------
+  // Logout - Limpiar sesión
+  // ---------------------------------------------------------
   const logout = () => {
     setUser(null);
     localStorage.removeItem("user");
+    localStorage.removeItem("accessToken");
 
-     toast({
-        title: "Cierre de sesión",
-        description: "Haz cerrado sesion correctamente",
-        className: "bg-green-500 text-white border-green-600",
-        
-      });
+    toast({
+      title: "Cierre de sesión",
+      description: "Has cerrado sesión correctamente",
+      className: "bg-green-500 text-white border-green-600",
+    });
 
-      navigate("/login");
-
+    navigate("/login", { replace: true });
   };
 
+  // ---------------------------------------------------------
+  // Validar sesión al cargar la app
+  // ---------------------------------------------------------
+  useEffect(() => {
+    const validateSession = async () => {
+      const token = localStorage.getItem("accessToken");
 
-  //Maneja el estado de cuando se hace un reload en la pagina para validar la sesion del usuario
-   useEffect(() => {
-    const token = localStorage.getItem("accessToken");
+      // Si no hay token, terminar loading
+      if (!token) {
+        setLoading(false);
+        return;
+      }
 
-    //Caso en el que no tengamos token
-    if (!token) {
-      
-      toast({
-        title: "Sesion No encontrada",
-        description: "No hemos podido encontrar tu sesión, lo sentimos",
-        className: "bg-red-500 text-white border-red-600",
+      try {
+        // Validar token con el backend
+        const data = await UserService.validateToken(token);
         
-      });
-
-      // setLoading(false);
-      return;
-    }
-
-    // Validamos el token actual, para saber si mantendremos la sesion
-    UserService.validateToken(token)
-      .then((data) => {
-        console.log("Esto es lo que recibimos", data)
         if (data) {
-          console.log("Es true")
-          navigate("/dashboard");
-          //se vuelve a asignar la data del usuario
-          setUser(token)
-          return;
+          // Token válido - mantener sesión
+          setUser(token);
+        } else {
+          // Token inválido - limpiar
+          localStorage.removeItem("accessToken");
+          localStorage.removeItem("user");
         }
-        //Finalizamos la sesion en caso de quel token no sea el correcto
-        logout();
-      })
-      .catch(() => {
-        //en caso de error igualmente deslogueamos al usuario
-        logout()
-      })
+      } catch (error) {
+        // Error al validar - limpiar sesión
+        console.error("Error validando token:", error);
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("user");
+      } finally {
+        setLoading(false);
+      }
+    };
 
+    validateSession();
   }, []);
 
-  console.log("Verifiquemos el estatus de autenticacion", user)
+  // ---------------------------------------------------------
+  // Mostrar loader mientras valida la sesión
+  // ---------------------------------------------------------
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen bg-background">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-lg text-muted-foreground">Cargando...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated: !!user, login, logout }}>
+    <AuthContext.Provider value={{ user, isAuthenticated: !!user, loading, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
@@ -88,6 +118,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
-  if (!context) throw new Error("useAuth debe usarse dentro de un AuthProvider");
+  if (!context) {
+    throw new Error("useAuth debe usarse dentro de un AuthProvider");
+  }
   return context;
 };

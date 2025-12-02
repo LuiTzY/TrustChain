@@ -12,86 +12,111 @@ import {
   Shield,
   User as UserIcon,
 } from "lucide-react";
+import { jwtDecode } from "jwt-decode";
 
 import type { User } from "../types/user.types";
 
 const Profile = () => {
   const navigate = useNavigate();
-
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [userData, setUserData] = useState<User | null>(null);
 
   // ---------------------------------------------------------
-  // ✔ Cargar usuario desde localStorage
+  // Cargar perfil del usuario
   // ---------------------------------------------------------
   useEffect(() => {
-    const stored = localStorage.getItem("user");
-
-    if (!stored) {
-      toast.error("Debes iniciar sesión");
-      navigate("/login");
-      return;
-    }
-
-    const localUser: User = JSON.parse(stored);
-
-    if (!localUser.id) {
-      toast.error("Usuario inválido");
-      navigate("/login");
-      return;
-    }
-
-    // ---------------------------------------------------------
-    // ✔ Traer el usuario real desde la API usando SU ID
-    // ---------------------------------------------------------
-    const fetchUser = async () => {
+    const loadUserProfile = async () => {
       try {
-        const data = await getUserById(localUser.id);
+        const token = localStorage.getItem("accessToken");
+        // decodificamos el token
+        const decoded: any = jwtDecode(token);
+        const userId = decoded.user_id || decoded.id || decoded.sub;
+
+        if (!userId) {
+          toast.error("Token inválido");
+          navigate("/login");
+          return;
+        }
+
+        // 3. Obtener datos del usuario
+        const data = await getUserById(userId);
+        
+        // 4. Validar que tiene los campos necesarios
+        if (!data || !data.first_name || !data.last_name) {
+          throw new Error("Datos de usuario incompletos");
+        }
+
+        // 5. Guardar en estado
         setUserData(data);
-      } catch (error) {
-        toast.error("No se pudo cargar el perfil del usuario.");
+        
+      } catch (error: any) {
+        console.error("Error al cargar perfil:", error);
+        toast.error(error.message || "Error al cargar el perfil");
+        navigate("/login");
       } finally {
         setLoading(false);
       }
     };
 
-    fetchUser();
-  }, [navigate]);
+    loadUserProfile();
+  }, []); // Solo se ejecuta una vez al montar
 
   // ---------------------------------------------------------
-  // ✔ Actualizar usuario
+  // Actualizar perfil
   // ---------------------------------------------------------
   const handleUpdateUser = async (updatedFields: Partial<User>) => {
     if (!userData) return;
 
     try {
-      const updated = await updateUser(userData.id, updatedFields);
-
-      setUserData(updated);
-
-      // actualizar localStorage
-      localStorage.setItem("user", JSON.stringify(updated));
-
-      toast.success("Perfil actualizado");
-
+      console.log("Esta es la data del user", userData)
+      console.log("Estos son los campos a actualizar", updatedFields)
+      const updatedUser = await updateUser(userData.id, updatedFields);
+      // Actualizar estado local
+      setUserData(updatedUser.data);
+      
+      // Actualizar localStorage
+      localStorage.setItem("user", JSON.stringify(updatedUser));
+      
+      toast.success("Perfil actualizado correctamente");
       setIsEditModalOpen(false);
-    } catch (error) {
-      toast.error("Error al actualizar datos");
+      
+    } catch (error: any) {
+      console.error("Error al actualizar perfil:", error);
+      toast.error(error.message || "Error al actualizar el perfil");
     }
   };
 
-  if (loading || !userData)
+  // ---------------------------------------------------------
+  // Estados de carga y error
+  // ---------------------------------------------------------
+  if (loading) {
     return (
       <div className="flex items-center justify-center h-screen">
         <p className="text-lg text-muted-foreground">Cargando perfil...</p>
       </div>
     );
+  }
 
-  // avatar iniciales
-  const initials =
-    userData.first_name[0].toUpperCase() + userData.last_name[0].toUpperCase();
+  if (!userData) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="text-center">
+          <p className="text-lg text-muted-foreground mb-4">
+            No se pudo cargar el perfil
+          </p>
+          <Button onClick={() => navigate("/login")}>
+            Volver al login
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
+  // ---------------------------------------------------------
+  // Preparar datos para mostrar
+  // ---------------------------------------------------------
+  const initials = `${userData.first_name[0]}${userData.last_name[0]}`.toUpperCase();
   const fullName = `${userData.first_name} ${userData.last_name}`;
 
   return (
@@ -172,7 +197,8 @@ const Profile = () => {
                       <div className="flex items-start gap-3">
                         <UserIcon className="w-5 h-5 text-muted-foreground mt-1" />
                         <p className="text-muted-foreground text-sm">
-                          Último acceso: {new Date(userData.last_login).toLocaleString()}
+                          Último acceso:{" "}
+                          {new Date(userData.last_login).toLocaleString()}
                         </p>
                       </div>
                     )}
@@ -180,8 +206,6 @@ const Profile = () => {
                 </div>
               </div>
             </div>
-
-            {/* Puedes mantener tus otras secciones si quieres (estadísticas, actividad, etc.) */}
           </div>
         </div>
       </main>

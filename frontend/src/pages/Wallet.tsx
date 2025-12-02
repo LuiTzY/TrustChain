@@ -3,6 +3,8 @@ import { Wallet as WalletIcon, TrendingUp, ArrowUpRight, ArrowDownLeft } from "l
 import { Button } from "@/components/ui/button";
 import nft1 from "@/assets/nft-1.png";
 import nft2 from "@/assets/nft-2.png";
+import { useQuery } from "@tanstack/react-query";
+import { UserService } from "@/services/user";
 
 const transactions = [
   {
@@ -31,12 +33,21 @@ const transactions = [
   }
 ];
 
-const ownedAssets = [
-  { id: 1, image: nft1, name: "Cyberpunk Cityscape", value: "2.5 ETH" },
-  { id: 2, image: nft2, name: "Holographic Genesis", value: "1.8 ETH" }
-];
+const WalletU = () => {
+  const balanceQuery = useQuery({
+    queryKey: ["userBalance"],
+    queryFn: UserService.getUserBalance
+  });
 
-const Wallet = () => {
+  const productsQuery = useQuery({
+    queryKey: ["payments"],
+    queryFn: UserService.getMyBuys
+  });
+
+  // Extraer datos de forma segura
+  const balance = balanceQuery.data?.data || 0;
+  const myAssets = productsQuery.data?.data || [];
+
   return (
     <div className="min-h-screen flex">
       <Sidebar />
@@ -45,7 +56,7 @@ const Wallet = () => {
         <div className="max-w-6xl mx-auto">
           <div className="mb-8">
             <h1 className="text-4xl font-bold mb-2">
-              Mi <span className="gradient-primary bg-clip-text text-transparent">Wallet</span>
+              Mi <span className="gradient-text">Wallet</span>
             </h1>
             <p className="text-muted-foreground">
               Gestiona tus activos y transacciones en blockchain
@@ -63,9 +74,27 @@ const Wallet = () => {
                   </div>
                   <div>
                     <p className="text-sm text-muted-foreground">Balance total</p>
-                    <p className="text-4xl font-bold gradient-primary bg-clip-text text-transparent">
-                      15.8 ETH
-                    </p>
+                    {balanceQuery.isLoading ? (
+                      <p className="text-2xl font-bold text-muted-foreground">
+                        Cargando...
+                      </p>
+                    ) : balanceQuery.isError ? (
+                      <p className="text-2xl font-bold text-red-500">
+                        Error al cargar
+                      </p>
+                    ) : (
+                      <>
+                        <p className="text-4xl font-bold">
+                          {balance} ETH
+                        </p>
+                        <p className="text-sm text-muted-foreground mt-1">
+                          DOP: {(balance * 60).toFixed(2)}
+                        </p>
+                        <p className="text-sm text-muted-foreground">
+                          USD: {(balance * 3500).toFixed(2)}
+                        </p>
+                      </>
+                    )}
                   </div>
                 </div>
                 
@@ -76,10 +105,17 @@ const Wallet = () => {
               </div>
 
               <div className="flex gap-4">
-                <Button className="gradient-primary hover:opacity-90">
+                <Button 
+                  className="gradient-primary hover:opacity-90"
+                  disabled={balanceQuery.isLoading}
+                >
                   Depositar
                 </Button>
-                <Button variant="outline" className="border-primary text-primary hover:bg-primary hover:text-primary-foreground">
+                <Button 
+                  variant="outline" 
+                  className="border-primary text-primary hover:bg-primary hover:text-primary-foreground"
+                  disabled={balanceQuery.isLoading}
+                >
                   Retirar
                 </Button>
               </div>
@@ -92,7 +128,10 @@ const Wallet = () => {
               <h2 className="text-2xl font-bold mb-6">Transacciones recientes</h2>
               <div className="space-y-4">
                 {transactions.map((tx) => (
-                  <div key={tx.id} className="glass-card rounded-2xl p-5 hover:shadow-[0_0_20px_rgba(42,56,255,0.2)] transition-all">
+                  <div 
+                    key={tx.id} 
+                    className="glass-card rounded-2xl p-5 hover:shadow-[0_0_20px_rgba(42,56,255,0.2)] transition-all"
+                  >
                     <div className="flex items-center gap-4">
                       <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
                         tx.type === 'buy' ? 'bg-primary/20' : 'bg-accent/20'
@@ -124,33 +163,60 @@ const Wallet = () => {
             {/* Owned Assets */}
             <div>
               <h2 className="text-2xl font-bold mb-6">Mis activos</h2>
-              <div className="space-y-4">
-                {ownedAssets.map((asset) => (
-                  <div key={asset.id} className="glass-card rounded-2xl p-5 hover:shadow-[0_0_20px_rgba(42,56,255,0.2)] transition-all">
-                    <div className="flex items-center gap-4">
-                      <img
-                        src={asset.image}
-                        alt={asset.name}
-                        className="w-20 h-20 rounded-xl object-cover"
-                      />
-                      
-                      <div className="flex-1">
-                        <p className="font-semibold text-lg">{asset.name}</p>
-                        <p className="text-muted-foreground">Valorado en</p>
-                      </div>
-                      
-                      <div className="text-right">
-                        <p className="text-xl font-bold gradient-primary bg-clip-text text-transparent">
-                          {asset.value}
-                        </p>
+              
+              {productsQuery.isLoading ? (
+                <div className="glass-card rounded-2xl p-8 text-center">
+                  <p className="text-muted-foreground">Cargando activos...</p>
+                </div>
+              ) : productsQuery.isError ? (
+                <div className="glass-card rounded-2xl p-8 text-center">
+                  <p className="text-red-500">Error al cargar activos</p>
+                </div>
+              ) : myAssets.length === 0 ? (
+                <div className="glass-card rounded-2xl p-8 text-center">
+                  <div className="w-16 h-16 rounded-2xl bg-muted flex items-center justify-center mx-auto mb-4">
+                    📦
+                  </div>
+                  <h3 className="font-semibold text-lg mb-2">No tienes activos</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Aún no has adquirido ningún activo digital
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {myAssets.map((asset) => (
+                    <div 
+                      key={asset.id} 
+                      className="glass-card rounded-2xl p-5 hover:shadow-[0_0_20px_rgba(42,56,255,0.2)] transition-all"
+                    >
+                      <div className="flex items-center gap-4">
+                        <img
+                          src={asset.image_url || nft1}
+                          alt={asset.name || "Activo"}
+                          className="w-20 h-20 rounded-xl object-cover"
+                          onError={(e) => {
+                            e.currentTarget.src = nft1;
+                          }}
+                        />
+                        
+                        <div className="flex-1">
+                          <p className="font-semibold text-lg">{asset.name || "Sin nombre"}</p>
+                          <p className="text-muted-foreground text-sm">Valorado en</p>
+                        </div>
+                        
+                        <div className="text-right">
+                          <p className="text-xl font-bold gradient-text">
+                            {asset.price || "0"} ETH
+                          </p>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              )}
 
               <div className="glass-card rounded-2xl p-8 mt-6 text-center">
-                <div className="w-16 h-16 rounded-2xl gradient-glow flex items-center justify-center mx-auto mb-4 animate-glow">
+                <div className="w-16 h-16 rounded-2xl gradient-glow flex items-center justify-center mx-auto mb-4 text-3xl">
                   🔒
                 </div>
                 <h3 className="font-semibold text-lg mb-2">Seguridad garantizada</h3>
@@ -166,4 +232,4 @@ const Wallet = () => {
   );
 };
 
-export default Wallet;
+export default WalletU;
