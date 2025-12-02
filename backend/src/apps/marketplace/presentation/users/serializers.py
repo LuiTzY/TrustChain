@@ -26,7 +26,16 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model =  UserModel
         fields = ('id','first_name','last_name','username','email','password','wallet_address','created_at','updated_at')
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         
+        # Si existe uns instancia  hacer todos los campos opcionales
+        if self.instance is not None:
+            for field_name, field in self.fields.items():
+                # No modificar campos read_only o write_only especiales
+                field.required = False        
+
 
 #  TODO: Hacer serializador y vista para ver lo que un usuario en especifico esta vendiendo
 
