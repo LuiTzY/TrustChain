@@ -44,7 +44,7 @@ export default function LoginForm() {
         className: "bg-green-500 text-white border-green-600",
         
       });
-      // ✅ redirige a productos
+      // edirige a productos
       navigate("/dashboard");
     } catch (error) {
       console.error(error);

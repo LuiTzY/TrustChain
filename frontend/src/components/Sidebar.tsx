@@ -1,5 +1,8 @@
 import { Home, ShoppingBag, Wallet, Activity, User, Shield } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
+import { jwtDecode, JwtPayload } from "jwt-decode";
+import { User as UserType } from "@/apps/users/types/user.types";
+import { LogoutButton } from "@/apps/users/components/Logout";
 
 const navItems = [
   { icon: Home, label: "Inicio", path: "/login" },
@@ -10,10 +13,15 @@ const navItems = [
 ];
 
 export const Sidebar = () => {
+
+  //Obtendremos la data del user localstorage
+  const token =  localStorage.getItem("accessToken");
+  const user:UserType = jwtDecode(token);
+  console.log("USER DESDE SIDEBAR", user)
   return (
-    <aside className="w-20 lg:w-64 glass-card border-r border-border flex flex-col">
+    <aside className="w-20 lg:w-64 h-screen sticky top-0 glass-card border-r border-border flex flex-col overflow-hidden">
       {/* Logo */}
-      <div className="p-6 border-b border-border">
+      <div className="p-6 border-b border-border flex-shrink-0">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-gradient-primary flex items-center justify-center">
             <Shield className="w-5 h-5 text-white" />
@@ -26,7 +34,7 @@ export const Sidebar = () => {
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 p-4">
+      <nav className="flex-1 p-4 overflow-y-auto">
         <ul className="space-y-2">
           {navItems.map((item) => (
             <li key={item.path}>
@@ -44,16 +52,19 @@ export const Sidebar = () => {
       </nav>
 
       {/* User profile at bottom */}
-      <div className="p-4 border-t border-border">
+      <div className="p-4 border-t border-border flex-shrink-0">
         <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-muted/30">
           <div className="w-8 h-8 rounded-full bg-gradient-gold flex items-center justify-center text-sm font-bold text-background">
-            JD
+            {user.first_name[0]}{user.last_name[0]}
           </div>
           <div className="hidden lg:block flex-1">
-            <p className="text-sm font-semibold">John Doe</p>
-            <p className="text-xs text-muted-foreground">0x1234...5678</p>
+            <p className="text-sm font-semibold">{user.first_name}</p>
+            <p className="text-xs text-muted-foreground">
+              {user.wallet_address.slice(0, 6)}...{user.wallet_address.slice(-4)}
+            </p>          
           </div>
         </div>
+        <LogoutButton/>
       </div>
     </aside>
   );

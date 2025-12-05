@@ -1,6 +1,6 @@
 import { Sidebar } from "@/components/Sidebar";
 import { ProductCard } from "@/components/ProductCard";
-import { Search, TrendingUp } from "lucide-react";
+import { Search, ShoppingCart, TrendingUp } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useQuery } from "@tanstack/react-query";
 import { ProductService } from "@/services/product";
@@ -8,11 +8,23 @@ import { Loader } from "@/components/ui/loader";
 import { useState } from "react";
 import { BalanceBadge } from "@/components/BalanceBadge";
 import { DashboardService } from "@/services/dashboard";
+import { Product } from "@/apps/products/types/product.types";
+import { useToast } from "@/hooks/use-toast";
+import { Button } from "@/components/ui/button";
+import { CartDrawer } from "@/components/CartDrawer";
+import { Badge } from "@/components/ui/badge";
+import { useWallet } from "@/apps/users/context/WalletContext";
+import { buyProductOnChain } from "@/apps/helpers/web3";
 
 
 
 const Dashboard = () => {
-  
+  const [cartItems, setCartItems] = useState<Product[]>([]);
+  const [isCartOpen, setIsCartOpen] = useState(false);
+  const {toast} = useToast();
+  const { account } = useWallet();
+  const [loading, setLoading] = useState(false);
+
   const {data, isLoading, error} = useQuery({
     queryKey:["products"],
     queryFn: ProductService.getAll
@@ -25,20 +37,116 @@ const Dashboard = () => {
   
   const [searchTerm, setSearchTerm] = useState("");
 
+  
   if (isLoading) return;
   if (error) {
     console.log(error);
-    return <p>Error al cargar productos </p>};
+    return <p>Error al cargar productos </p>
+  };
   
   const filteredProducts = data.data?.filter((p) =>
     p.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const handleAddToCart = (id: number) => {
+    const product = data.data.find(p => p.id === id);
+    if (product && !cartItems.find(item => item.id === id)) {
+      setCartItems([...cartItems, product]);
+      toast({
+        title: "Producto agregado",
+        description: "Agregamos correctamente el producto al carrito",
+        className: "bg-green-500 text-white border-green-600",
+        
+      });
+    } else if (cartItems.find(item => item.id === id)) {
+      toast({
+        title: "Producto descartado",
+        description: "No se permite la compra de mas de un producto",
+        className: "bg-blue-500 text-white border-blue-600",
+        
+      });
+    }
+  };
+
+  const handleRemoveFromCart = (id: number) => {
+    setCartItems(cartItems.filter(item => item.id !== id));
+  };
+
+  const handleCheckout = async () => {
+
+  if (cartItems.length === 0) {
+    alert("Tu carrito está vacío.");
+    return;
+  }
+
+  try {
+    setLoading(true);
+
+    let results = [];
+
+    //Aqui ejecutamos la compra  iterando por cada producto del carrito
+    for (const item of cartItems) {
+      const { id, price } = item;
+
+      console.log(`Comprando producto ${id} por ${price} ETH...`);
+
+      const receipt = await buyProductOnChain(id, price);
+
+      results.push({
+        productId: id,
+        txHash: receipt.hash,
+      });
+    }
+
+    // Mostrar resumen final
+    alert(`Checkout completado:\n${results.map(r => (
+      `Producto ${r.productId} → TX: ${r.txHash}`
+    )).join("\n")}`);
+
+    // limpiar carrito
+    setCartItems([]);
+    setIsCartOpen(false);
+
+  } catch (err) {
+    console.error(err);
+    alert("un error durante el checkout.");
+  } finally {
+    setLoading(false);
+  }
+};
+
   return (
     <div className="min-h-screen flex">
       <Loader message="Cargando productos por favor espera" loading={isLoading} />
       <Sidebar />
-      <BalanceBadge />
       
+      
+      <div className="fixed top-6 right-6 z-50 flex flex-col gap-3">
+        <BalanceBadge />
+        
+        <Button 
+          variant="outline" 
+          className="border-border hover:border-primary shadow-lg relative w-full"
+          onClick={() => setIsCartOpen(true)}
+        >
+          <ShoppingCart className="w-4 h-4 mr-2" />
+          Carrito
+          {cartItems.length > 0 && (
+            <Badge className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-0 bg-accent text-accent-foreground">
+              {cartItems.length}
+            </Badge>
+          )}
+        </Button>
+      </div>
+
+      <CartDrawer
+        open={isCartOpen}
+        onOpenChange={setIsCartOpen}
+        items={cartItems}
+        onRemoveItem={handleRemoveFromCart}
+        onCheckout={handleCheckout}
+      />
+ 
       <main className="flex-1 ml-20 p-8">
         <div className="max-w-7xl mx-auto">
           {/* Header */}
@@ -127,7 +235,7 @@ const Dashboard = () => {
             <h2 className="text-2xl font-bold mb-6">Activos disponibles</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredProducts.map((product) => (
-                <ProductCard key={product.id} {...product} />
+                <ProductCard key={product.id} {...product} onAddToCart={handleAddToCart} />
               ))}
             </div>
           </div>

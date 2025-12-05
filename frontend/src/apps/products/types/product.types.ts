@@ -5,11 +5,11 @@ export interface Product {
   name: string;
   description: string;
   price: string;
-  stock: number;
+  stock?: number;
   image_url?: string;
   created_at?: string;
   updated_at?: string;
-  user_seller: User
+  user_seller?: User
 }
 
   

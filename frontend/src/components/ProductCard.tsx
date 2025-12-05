@@ -13,9 +13,10 @@ interface ProductCardProps {
   description?: string;
   price: string;
   type?: string;
+  onAddToCart?: (id: number) => void;
 }
 
-export const ProductCard = ({ id, image_url, name, description, price, type }: ProductCardProps) => {
+export const ProductCard = ({ id, image_url, name, description, price, type, onAddToCart }: ProductCardProps) => {
   const [isPurchaseOpen, setIsPurchaseOpen] = useState(false);
   const [isChatOpen, setIsChatOpen] = useState(false);
 
@@ -69,6 +70,7 @@ export const ProductCard = ({ id, image_url, name, description, price, type }: P
               size="sm"
               variant="outline"
               className="border-primary text-primary hover:bg-primary hover:text-primary-foreground"
+              onClick={() => onAddToCart?.(id)}
             >
               <ShoppingCart className="w-4 h-4" />
             </Button>
