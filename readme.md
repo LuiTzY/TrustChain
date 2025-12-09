@@ -72,30 +72,37 @@ flowchart LR
 
 ### Diagrama de proceso de compras
 ```
-sequenceDiagram
-    actor User as 👤 Usuario
-    participant FE as Frontend React
-    participant API as Backend API
-    participant Celery as Celery Worker
-    participant BC as Blockchain
-    participant DB as MySQL
+flowchart TD
+    Start([👤 Usuario ve Producto]) --> Connect{Wallet<br/>Conectada?}
+    Connect -->|No| ConnectWallet[Conectar MetaMask]
+    ConnectWallet --> CheckBalance
+    Connect -->|Sí| CheckBalance{Balance<br/>Suficiente?}
     
-    User->>FE: Crear Producto
-    FE->>API: POST /api/products/
-    API->>DB: Guardar Producto (pending)
-    API->>Celery: Publicar en Blockchain (async)
-    API-->>FE: Response (producto creado)
-    FE-->>User: Confirmación inicial
+    CheckBalance -->|No| Insufficient[❌ Saldo Insuficiente]
+    CheckBalance -->|Sí| InitPurchase[Iniciar Compra]
     
-    Celery->>BC: createProduct(productData)
-    BC-->>Celery: Transaction Hash
-    Celery->>BC: Esperar confirmación
-    BC-->>Celery: Transaction Confirmed
-    Celery->>DB: Actualizar 
+    InitPurchase --> CallContract[Llamada: buyProduct&#40;productId&#41;]
+    CallContract --> WaitConfirm[⏳ Esperar Confirmación Blockchain]
+    WaitConfirm --> Confirmed{Confirmado?}
     
-    BC->>API: Event: ListItem
-    API->>DB: Sincronizar estado
-    FE-->>User: ✅ Publicado en Blockchain
+    Confirmed -->|No| Failed[❌ Transacción Fallida]
+    Confirmed -->|Sí| UpdateDB[Actualizar DB via Celery]
+    UpdateDB --> NotifyUser[📧 Notificar Usuario]
+    NotifyUser --> Success([✅ Compra Exitosa])
+    
+    Failed --> End([Fin])
+    Insufficient --> End
+    Success --> End
+    
+    classDef successStyle fill:#10b981,stroke:#047857,stroke-width:2px,color:#fff
+    classDef errorStyle fill:#ef4444,stroke:#dc2626,stroke-width:2px,color:#fff
+    classDef processStyle fill:#3b82f6,stroke:#1e40af,stroke-width:2px,color:#fff
+    classDef decisionStyle fill:#f59e0b,stroke:#d97706,stroke-width:2px,color:#fff
+    
+    class Success,NotifyUser,UpdateDB successStyle
+    class Failed,Insufficient errorStyle
+    class InitPurchase,CallContract,WaitConfirm,ConnectWallet processStyle
+    class Connect,CheckBalance,Confirmed decisionStyle
 
 ```
 ### Flujo de Datos
@@ -733,4 +740,5 @@ Desarrollado por:
 - **GitHub:** https://github.com/trustchain
 
 ---
+
 
