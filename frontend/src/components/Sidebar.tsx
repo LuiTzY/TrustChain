@@ -5,7 +5,7 @@ import { User as UserType } from "@/apps/users/types/user.types";
 import { LogoutButton } from "@/apps/users/components/Logout";
 
 const navItems = [
-  { icon: Home, label: "Inicio", path: "/login" },
+  { icon: Home, label: "Inicio", path: "/index" },
   { icon: ShoppingBag, label: "Marketplace", path: "/dashboard" },
   { icon: Wallet, label: "Mi Wallet", path: "/wallet" },
   { icon: Activity, label: "Transacciones", path: "/transactions" },
@@ -17,8 +17,9 @@ export const Sidebar = () => {
   //Obtendremos la data del user localstorage
   const token =  localStorage.getItem("accessToken");
   const user:UserType = jwtDecode(token);
-  console.log("USER DESDE SIDEBAR", user)
+  
   return (
+    
     <aside className="w-20 lg:w-64 h-screen sticky top-0 glass-card border-r border-border flex flex-col overflow-hidden">
       {/* Logo */}
       <div className="p-6 border-b border-border flex-shrink-0">

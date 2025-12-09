@@ -1,14 +1,14 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { LoginCredentials } from "../types/user.types";
-import { loginUser } from "@/api/api";
-import { decodeJwtPayload } from "@/helpers/jwt";
 import { useAuth } from "../context/AuthContext";
 import { useToast } from "@/hooks/use-toast";
+import { UserService } from "@/services/user";
+import { SetSession } from "@/apps/helpers/jwt";
 
 export default function LoginForm() {
   const { login } = useAuth();
-  const navigate = useNavigate(); // 👈 para redirigir
+  const navigate = useNavigate(); 
   const [form, setForm] = useState<LoginCredentials>({
     username: "",
     password: "",
@@ -24,19 +24,9 @@ export default function LoginForm() {
     e.preventDefault();
     try {
       // limpiar datos previos
-      localStorage.removeItem("accessToken");
-      localStorage.removeItem("refreshToken");
-      localStorage.removeItem("user");
-
-      // login simulado (usa users.json)
-      const response = await loginUser(form);
-
-      localStorage.setItem("accessToken", response.access);
-      localStorage.setItem("refreshToken", response.refresh);
-      const decodedUser = await decodeJwtPayload(response.access);
-      localStorage.setItem("user", decodedUser ? JSON.stringify(decodedUser) : "");
-
-      login(response.access);
+      const data = await UserService.login(form);
+      await SetSession(data.access,data.refresh);
+      login(data.access);
 
        toast({
         title: "Inicio de sesión",

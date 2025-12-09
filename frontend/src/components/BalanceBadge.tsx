@@ -9,7 +9,7 @@ export const BalanceBadge = () => {
         queryKey:["userBalance"],
         queryFn:UserService.getUserBalance
     });
-
+    console.log(data)
     const balance = data?.data ?? null;
 
   return (

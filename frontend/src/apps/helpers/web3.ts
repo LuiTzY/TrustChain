@@ -1,16 +1,11 @@
 import { BrowserProvider, Contract, ethers } from "ethers";
-import MarketplaceArtifact from "@/../../hardart/artifacts/contracts/Marketplace.sol/Marketplace.json";
 
-const ABI = MarketplaceArtifact.abi;
-console.log(`Este es el ABI`, ABI)
 declare global {
   interface Window {
     ethereum?: any;
   }
 }
-//variables de entorno, ajustar a las del archivo (Ver luego ajuste desde docker)
-const CONTRACT_ADDRESS = import.meta.env.VITE_CONTRACT_ADDRESS;
-const EXPECTED_CHAIN_ID = import.meta.env.VITE_CHAIN_ID;
+
 
 // verificamos si metamask esta dispoinble
 const checkMetaMask = () => {
@@ -19,33 +14,16 @@ const checkMetaMask = () => {
   }
 };
 
-//metodo para conectarnos a la wallet
-export const connectWallet = async (): Promise<string> => {
-  console.log("INICIAMOS LA CONEXION A METAMASK")
-  checkMetaMask();
-  
-  try {
-    const accounts = await window.ethereum.request({
-      method: "eth_requestAccounts",
-    });
-    
-    // Verificar la red
-    await checkNetwork();
-    
-    return accounts[0];
-  } catch (error) {
-    console.error("Error al conectar wallet:", error);
-    throw error;
-  }
-};
 
 //  verifica que estamos en la red correcta
-export const checkNetwork = async () => {
+export const checkNetwork = async (EXPECTED_CHAIN_ID) => {
   checkMetaMask();
   
-  const chainId = await window.ethereum.request({ method: "eth_chainId" });
-  
-  if (EXPECTED_CHAIN_ID && chainId !== EXPECTED_CHAIN_ID) {
+  const chainHex = await window.ethereum.request({ method: "eth_chainId" });
+  const currentChainId = parseInt(chainHex, 16);
+
+  console.log("CHAIN ID", currentChainId)
+  if (EXPECTED_CHAIN_ID && currentChainId !== EXPECTED_CHAIN_ID) {
     throw new Error(
       `Red incorrecta. Por favor cambia a la red con Chain ID: ${EXPECTED_CHAIN_ID}`
     );
@@ -64,25 +42,20 @@ export const getSigner = async () => {
   return await provider.getSigner();
 };
 
-// obtener contrato del marketplace
-export const getMarketplaceContract = async (): Promise<Contract> => {
-  if (!CONTRACT_ADDRESS) {
-    throw new Error("CONTRACT_ADDRESS no está definido en las variables de entorno");
-  }
-  
-  const signer = await getSigner();
-  return new Contract(CONTRACT_ADDRESS, ABI, signer);
-};
+
 
 // comprar producto en blockchain
 export const buyProductOnChain = async (
+  contract: Contract,
   productId: number | string,
   priceInEth: string
 ) => {
-  try {
-    const contract = await getMarketplaceContract();
 
-    const tx = await contract.buyProduct(productId, {
+
+  try {
+
+
+    const tx = await contract.buyItem(productId, {
       value: ethers.parseEther(priceInEth),
     });
 
@@ -90,21 +63,16 @@ export const buyProductOnChain = async (
     const receipt = await tx.wait();
     console.log("Transaccion confirmada:", receipt);
 
-    return receipt;
+    return {success: true, data: receipt};
   } catch (error) {
-    console.error("Error al comprar producto:", error);
-    throw error;
-  }
-};
 
-// obtener producto
-export const getProductOnChain = async (id: number | string) => {
-  try {
-    const contract = await getMarketplaceContract();
-    return await contract.getProduct(id);
-  } catch (error) {
-    console.error("Error al obtener producto:", error);
-    throw error;
+   console.error("Error al procesar compra:", error);
+
+    const message =
+      error?.info.error.message || //Devolvemos la razon del error
+      "Ocurrió un error inesperado al realizar la compra.";
+    console.log("Ocurrio esto", error)
+    return {success: false, data: message};
   }
 };
 

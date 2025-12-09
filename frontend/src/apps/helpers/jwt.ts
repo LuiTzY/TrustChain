@@ -30,3 +30,17 @@ export const decodeJwtPayload = async (token: string) =>  {
   }
 };
 
+
+
+export const SetSession = async (access, refresh) =>{
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("refreshToken");
+        localStorage.removeItem("user");
+  
+  
+        localStorage.setItem("accessToken", access);
+        localStorage.setItem("refreshToken", refresh);
+        const decodedUser = await decodeJwtPayload(access);
+        localStorage.setItem("user", decodedUser ? JSON.stringify(decodedUser) : "");
+  
+}

@@ -17,6 +17,8 @@ import Transactions from "@/apps/payments/pages/Transaction";
 import UserWallet from "@/apps/users/pages/Wallet";
 import WalletU from "@/pages/Wallet";
 import { WalletProvider } from "@/apps/users/context/WalletContext";
+import { CartProvider } from "@/apps/users/context/CartContext";
+import Index from "@/pages/Index";
 
 
 const queryClient = new QueryClient();
@@ -27,7 +29,7 @@ const App = () =>  {
 
   return(
   <WalletProvider>
-
+    <CartProvider>
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <Toaster />
@@ -36,6 +38,14 @@ const App = () =>  {
           <Route path="/" element={<LoginPage/> } />
           <Route path="/login" element={<LoginPage/>} />
           <Route path="/register" element={<RegisterPage />} />
+          <Route
+            path="/index"
+            element={
+              <ProtectedRoute>
+                <Index />
+              </ProtectedRoute>
+            }
+          />
            <Route
             path="/profile"
             element={
@@ -68,6 +78,8 @@ const App = () =>  {
         </Routes>
     </TooltipProvider>
   </QueryClientProvider>
+  </CartProvider>
+
   </WalletProvider>
 
   )
