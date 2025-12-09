@@ -71,7 +71,7 @@ flowchart LR
 ```
 
 ### Diagrama de proceso de compras
-```
+```mermaid
 flowchart TD
     Start([👤 Usuario ve Producto]) --> Connect{Wallet<br/>Conectada?}
     Connect -->|No| ConnectWallet[Conectar MetaMask]
@@ -740,5 +740,6 @@ Desarrollado por:
 - **GitHub:** https://github.com/trustchain
 
 ---
+
 
 
