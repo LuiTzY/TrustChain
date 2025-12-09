@@ -30,143 +30,152 @@ export default function RegisterForm() {
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="flex flex-col gap-5 max-w-sm mx-auto w-full transition-all duration-300"
-    >
-      {/* Paso 1: Datos personales */}
-      {step === 1 && (
-        <div className="flex flex-col gap-4 animate-fade-in">
-          <h2 className="text-[#2f45c6] text-lg font-['Orbitron'] font-semibold text-center">
-            Datos personales
-          </h2>
+<form
+  onSubmit={handleSubmit}
+  className="flex flex-col gap-6 max-w-md mx-auto w-full bg-gradient-to-br from-slate-800/90 to-slate-900/90 backdrop-blur-xl rounded-3xl border border-slate-700/50 p-8 shadow-2xl transition-all duration-300 font-['Orbitron']"
+>
+  {/* Paso 1: Datos personales */}
+  {step === 1 && (
+    <div className="flex flex-col gap-5 animate-fade-in">
+      <div className="text-center mb-2">
+        <h2 className="text-2xl font-bold text-white mb-2 tracking-tight">
+          Datos personales
+        </h2>
+        <div className="h-1 w-20 bg-gradient-to-r from-blue-500 to-purple-500 mx-auto rounded-full"></div>
+      </div>
 
-          {/* Nombre */}
-          <div className="flex flex-col gap-2">
-            <h3 className="text-[#5f5f5f] text-[0.8rem] font-medium font-['Orbitron']">
-              Nombre
-            </h3>
-            <input
-              name="first_name"
-              placeholder="Ingresa tu nombre"
-              onChange={handleChange}
-              className="text-[#8e8e8e] text-[0.75rem] w-full h-[46px] px-[19px] py-[13px] rounded-full outline outline-1 outline-[#5f5f5f]/40 focus:outline-[#2f45c6] placeholder-[#b3b3b3] transition-all duration-200"
-            />
-          </div>
+      {/* Nombre */}
+      <div className="space-y-2">
+        <label className="block text-sm font-medium text-slate-300 ml-1">
+          Nombre
+        </label>
+        <input
+          name="first_name"
+          placeholder="Ingresa tu nombre"
+          onChange={handleChange}
+          className="w-full bg-slate-900/50 border border-slate-700 text-white rounded-xl px-4 py-3.5 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 placeholder:text-slate-500 hover:border-slate-600 text-sm"
+        />
+      </div>
 
-          {/* Apellido */}
-          <div className="flex flex-col gap-2">
-            <h3 className="text-[#5f5f5f] text-[0.8rem] font-medium font-['Orbitron']">
-              Apellido
-            </h3>
-            <input
-              name="last_name"
-              placeholder="Ingresa tu apellido"
-              onChange={handleChange}
-              className="text-[#8e8e8e] text-[0.75rem] w-full h-[46px] px-[19px] py-[13px] rounded-full outline outline-1 outline-[#5f5f5f]/40 focus:outline-[#2f45c6] placeholder-[#b3b3b3] transition-all duration-200"
-            />
-          </div>
+      {/* Apellido */}
+      <div className="space-y-2">
+        <label className="block text-sm font-medium text-slate-300 ml-1">
+          Apellido
+        </label>
+        <input
+          name="last_name"
+          placeholder="Ingresa tu apellido"
+          onChange={handleChange}
+          className="w-full bg-slate-900/50 border border-slate-700 text-white rounded-xl px-4 py-3.5 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 placeholder:text-slate-500 hover:border-slate-600 text-sm"
+        />
+      </div>
 
-          <button
-            type="button"
-            onClick={handleNext}
-            className="mt-2 bg-[#2f45c6] text-white py-3 rounded-full font-['Orbitron'] hover:bg-[#2334a8] transition-all duration-200"
-          >
-            Siguiente
-          </button>
-        </div>
-      )}
+      <button
+        type="button"
+        onClick={handleNext}
+        className="w-full mt-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold py-4 rounded-xl hover:from-blue-700 hover:to-blue-800 transition-all duration-200 shadow-lg shadow-blue-900/30 hover:shadow-xl hover:shadow-blue-900/40 hover:-translate-y-0.5 uppercase tracking-wide"
+      >
+        Siguiente
+      </button>
+    </div>
+  )}
 
-      {/* Paso 2: Datos de cuenta */}
-      {step === 2 && (
-        <div className="flex flex-col gap-4 animate-fade-in">
-          <h2 className="text-[#2f45c6] text-lg font-['Orbitron'] font-semibold text-center">
-            Datos de cuenta
-          </h2>
+  {/* Paso 2: Datos de cuenta */}
+  {step === 2 && (
+    <div className="flex flex-col gap-5 animate-fade-in">
+      <div className="text-center mb-2">
+        <h2 className="text-2xl font-bold text-white mb-2 tracking-tight">
+          Datos de cuenta
+        </h2>
+        <div className="h-1 w-20 bg-gradient-to-r from-blue-500 to-purple-500 mx-auto rounded-full"></div>
+      </div>
 
-          {/* Usuario */}
-          <div className="flex flex-col gap-2">
-            <h3 className="text-[#5f5f5f] text-[0.8rem] font-medium font-['Orbitron']">
-              Usuario
-            </h3>
-            <input
-              name="username"
-              placeholder="Elige un nombre de usuario"
-              onChange={handleChange}
-              className="text-[#8e8e8e] text-[0.75rem] w-full h-[46px] px-[19px] py-[13px] rounded-full outline outline-1 outline-[#5f5f5f]/40 focus:outline-[#2f45c6] placeholder-[#b3b3b3] transition-all duration-200"
-            />
-          </div>
+      {/* Usuario */}
+      <div className="space-y-2">
+        <label className="block text-sm font-medium text-slate-300 ml-1">
+          Usuario
+        </label>
+        <input
+          name="username"
+          placeholder="Elige un nombre de usuario"
+          onChange={handleChange}
+          className="w-full bg-slate-900/50 border border-slate-700 text-white rounded-xl px-4 py-3.5 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 placeholder:text-slate-500 hover:border-slate-600 text-sm"
+        />
+      </div>
 
-          {/* Correo */}
-          <div className="flex flex-col gap-2">
-            <h3 className="text-[#5f5f5f] text-[0.8rem] font-medium font-['Orbitron']">
-              Correo
-            </h3>
-            <input
-              name="email"
-              type="email"
-              placeholder="Introduce tu correo electrónico"
-              onChange={handleChange}
-              className="text-[#8e8e8e] text-[0.75rem] w-full h-[46px] px-[19px] py-[13px] rounded-full outline outline-1 outline-[#5f5f5f]/40 focus:outline-[#2f45c6] placeholder-[#b3b3b3] transition-all duration-200"
-            />
-          </div>
+      {/* Correo */}
+      <div className="space-y-2">
+        <label className="block text-sm font-medium text-slate-300 ml-1">
+          Correo
+        </label>
+        <input
+          name="email"
+          type="email"
+          placeholder="Introduce tu correo electrónico"
+          onChange={handleChange}
+          className="w-full bg-slate-900/50 border border-slate-700 text-white rounded-xl px-4 py-3.5 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 placeholder:text-slate-500 hover:border-slate-600 text-sm"
+        />
+      </div>
 
-          <div className="flex justify-between mt-2">
-            <button
-              type="button"
-              onClick={handlePrev}
-              className="bg-gray-300 text-gray-800 px-6 py-2 rounded-full font-['Orbitron'] hover:bg-gray-400 transition-all duration-200"
-            >
-              Atrás
-            </button>
-            <button
-              type="button"
-              onClick={handleNext}
-              className="bg-[#2f45c6] text-white px-6 py-2 rounded-full font-['Orbitron'] hover:bg-[#2334a8] transition-all duration-200"
-            >
-              Siguiente
-            </button>
-          </div>
-        </div>
-      )}
+      <div className="flex gap-3 mt-2">
+        <button
+          type="button"
+          onClick={handlePrev}
+          className="flex-1 bg-slate-800/50 text-slate-300 font-semibold py-3.5 rounded-xl hover:bg-slate-700/50 transition-all duration-200 border border-slate-700 hover:border-slate-600 uppercase tracking-wide"
+        >
+          Atrás
+        </button>
+        <button
+          type="button"
+          onClick={handleNext}
+          className="flex-1 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold py-3.5 rounded-xl hover:from-blue-700 hover:to-blue-800 transition-all duration-200 shadow-lg shadow-blue-900/30 uppercase tracking-wide"
+        >
+          Siguiente
+        </button>
+      </div>
+    </div>
+  )}
 
-      {/* Paso 3: Contraseña y envío */}
-      {step === 3 && (
-        <div className="flex flex-col gap-4 animate-fade-in">
-          <h2 className="text-[#2f45c6] text-lg font-['Orbitron'] font-semibold text-center">
-            Seguridad
-          </h2>
+  {/* Paso 3: Contraseña y envío */}
+  {step === 3 && (
+    <div className="flex flex-col gap-5 animate-fade-in">
+      <div className="text-center mb-2">
+        <h2 className="text-2xl font-bold text-white mb-2 tracking-tight">
+          Seguridad
+        </h2>
+        <div className="h-1 w-20 bg-gradient-to-r from-blue-500 to-purple-500 mx-auto rounded-full"></div>
+      </div>
 
-          <div className="flex flex-col gap-2">
-            <h3 className="text-[#5f5f5f] text-[0.8rem] font-medium font-['Orbitron']">
-              Contraseña
-            </h3>
-            <input
-              name="password"
-              type="password"
-              placeholder="Crea una contraseña segura"
-              onChange={handleChange}
-              className="text-[#8e8e8e] text-[0.75rem] w-full h-[46px] px-[19px] py-[13px] rounded-full outline outline-1 outline-[#5f5f5f]/40 focus:outline-[#2f45c6] placeholder-[#b3b3b3] transition-all duration-200"
-            />
-          </div>
+      <div className="space-y-2">
+        <label className="block text-sm font-medium text-slate-300 ml-1">
+          Contraseña
+        </label>
+        <input
+          name="password"
+          type="password"
+          placeholder="Crea una contraseña segura"
+          onChange={handleChange}
+          className="w-full bg-slate-900/50 border border-slate-700 text-white rounded-xl px-4 py-3.5 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 placeholder:text-slate-500 hover:border-slate-600 text-sm"
+        />
+      </div>
 
-          <div className="flex justify-between mt-2">
-            <button
-              type="button"
-              onClick={handlePrev}
-              className="bg-gray-300 text-gray-800 px-6 py-2 rounded-full font-['Orbitron'] hover:bg-gray-400 transition-all duration-200"
-            >
-              Atrás
-            </button>
-            <button
-              type="submit"
-              className="bg-[#2f45c6] text-white px-8 py-3 rounded-full font-['Orbitron'] hover:bg-[#2334a8] transition-all duration-200"
-            >
-              Crear cuenta
-            </button>
-          </div>
-        </div>
-      )}
-    </form>
+      <div className="flex gap-3 mt-2">
+        <button
+          type="button"
+          onClick={handlePrev}
+          className="flex-1 bg-slate-800/50 text-slate-300 font-semibold py-3.5 rounded-xl hover:bg-slate-700/50 transition-all duration-200 border border-slate-700 hover:border-slate-600 uppercase tracking-wide"
+        >
+          Atrás
+        </button>
+        <button
+          type="submit"
+          className="flex-1 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold py-3.5 rounded-xl hover:from-blue-700 hover:to-blue-800 transition-all duration-200 shadow-lg shadow-blue-900/30 hover:shadow-xl hover:shadow-blue-900/40 hover:-translate-y-0.5 uppercase tracking-wide"
+        >
+          Crear cuenta
+        </button>
+      </div>
+    </div>
+  )}
+</form>
   );
 }
