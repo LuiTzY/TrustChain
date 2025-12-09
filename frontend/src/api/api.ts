@@ -3,7 +3,7 @@ import axios, { AxiosRequestConfig, Method } from "axios";
 /*
   Cambiar a localhost en caso de no tener docker: const BASE_URL = "http://localhost:8000";
 */
-const BASE_URL = "http://api:8000";
+const BASE_URL = "http://localhost:8000";
 
 
 export const apiClient = async <T>(
