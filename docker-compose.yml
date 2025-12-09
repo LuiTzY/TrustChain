@@ -54,7 +54,7 @@ services:
       DATABASE_USER_PROD: trustuser
       DATABASE_PASSWORD_PROD: 1234
       DATABASE_HOST_PROD: db
-      DATABASE_PORT_PROD: 3306
+      DATABASE_PORT_PROD: 3307
 
     networks:
       - trustChainNet
@@ -89,13 +89,13 @@ services:
       DATABASE_USER_PROD: trustuser
       DATABASE_PASSWORD_PROD: 1234
       DATABASE_HOST_PROD: db
-      DATABASE_PORT_PROD: 3306
+      DATABASE_PORT_PROD: 3307
 
   db:
       container_name: db
       image: mysql:8.0.41-oraclelinux9
       ports:
-        - 3306:3306
+        - 3307:3306
 
       #healtcheck para validar la conexion a la db, esto para que el API espere a que el servicio de mysql este up
       healthcheck:
@@ -121,15 +121,23 @@ services:
     networks:
       - trustChainNet
 
-  # frontend:
-  #   build:
-  #     context: ./frontend
-  #     Dockerfile: Dockerfile
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        REACT_APP_API_BASE_URL: http://host.docker.internal:8000
+        REACT_APP_API_WEBSOCKET_BASE_URL: ws://host.docker.internal:8000/api/chat/
 
-  #   container_name: TRUSTCHAIN-FRONTEND
-  #   image: trustchain-frontend/latest
-  #   ports:
-  #     - 0000:0000 #definir puertos
+    container_name: TRUSTCHAIN-FRONTEND
+    image: trustchain-frontend/latest
+    ports:
+      - 9000:80 
+    
+    depends_on:
+      - api
+    networks:
+      - trustChainNet
 
 networks:
   trustChainNet:
