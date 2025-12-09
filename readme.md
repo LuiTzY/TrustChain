@@ -70,6 +70,34 @@ flowchart LR
     F --> E
 ```
 
+### Diagrama de proceso de compras
+```
+sequenceDiagram
+    actor User as 👤 Usuario
+    participant FE as Frontend React
+    participant API as Backend API
+    participant Celery as Celery Worker
+    participant BC as Blockchain
+    participant DB as MySQL
+    
+    User->>FE: Crear Producto
+    FE->>API: POST /api/products/
+    API->>DB: Guardar Producto (pending)
+    API->>Celery: Publicar en Blockchain (async)
+    API-->>FE: Response (producto creado)
+    FE-->>User: Confirmación inicial
+    
+    Celery->>BC: createProduct(productData)
+    BC-->>Celery: Transaction Hash
+    Celery->>BC: Esperar confirmación
+    BC-->>Celery: Transaction Confirmed
+    Celery->>DB: Actualizar 
+    
+    BC->>API: Event: ListItem
+    API->>DB: Sincronizar estado
+    FE-->>User: ✅ Publicado en Blockchain
+
+```
 ### Flujo de Datos
 
 1. **Usuario** interactúa con el **Frontend React**
