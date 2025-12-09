@@ -15,7 +15,7 @@ import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { Transaction } from "ethers";
 import Transactions from "@/apps/payments/pages/Transaction";
 import UserWallet from "@/apps/users/pages/Wallet";
-import WalletU from "@/pages/Wallet";
+import WalletU from "@/apps/users/components/Wallet";
 import { WalletProvider } from "@/apps/users/context/WalletContext";
 import { CartProvider } from "@/apps/users/context/CartContext";
 import Index from "@/pages/Index";
@@ -26,7 +26,7 @@ const queryClient = new QueryClient();
 const App = () =>  {
   //Usamos el Authprovider para proteger las rutas
   const {isAuthenticated} =  useAuth();
-
+  console.log("RUTAS INICIAS Y AUTH", isAuthenticated)
   return(
   <WalletProvider>
     <CartProvider>

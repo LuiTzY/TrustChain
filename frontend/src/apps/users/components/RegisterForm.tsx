@@ -2,8 +2,8 @@ import { useState } from "react";
 import { RegisterData } from "../types/user.types";
 import { useToast } from "@/hooks/use-toast";
 import { UserService } from "@/services/user";
-import { SetSession } from "@/apps/helpers/jwt";
 import { useNavigate } from "react-router-dom";
+import { SetSession } from "@/apps/helpers/jwt";
 
 export default function RegisterForm() {
   const [form, setForm] = useState<RegisterData>({
@@ -30,6 +30,8 @@ export default function RegisterForm() {
       const data = (await UserService.registerUser(form)).data;
       console.log("Esto es lo recibido", data)
       SetSession(data.access_token, data.refresh)
+      navigate("/dashboard");
+      
       console.log(data)
        toast({
         title: `Registro Exitoso`,
@@ -38,7 +40,6 @@ export default function RegisterForm() {
         
       });
 
-        navigate("/dashboard");
 
     } catch(error) {
         toast({

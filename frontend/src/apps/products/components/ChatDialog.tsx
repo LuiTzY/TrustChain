@@ -14,6 +14,14 @@ import { useAuth } from "@/apps/users/context/AuthContext";
 import { jwtDecode } from "jwt-decode";
 import { User as UserType } from "@/apps/users/types/user.types";
 
+
+
+/*
+Cambiar a localhost en caso de no tener docker: const WEB_SOCKET_URL = "ws://localhost:8000/api/chat/";
+
+*/
+const WEB_SOCKET_URL = "ws://api:8000/api/chat/";
+
 interface Message {
   id: string;
   text: string;
@@ -48,7 +56,7 @@ export const ChatDialog = ({
   useEffect(() => {
     if (!open) return;
 
-    ws.current = new WebSocket(`ws://localhost:8000/api/chat/`);
+    ws.current = new WebSocket(WEB_SOCKET_URL);
 
     ws.current.onopen = () => {
       console.log("Conectado al chat:");

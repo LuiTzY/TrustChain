@@ -56,7 +56,7 @@ export const buyProductOnChain = async (
 
 
     const tx = await contract.buyItem(productId, {
-      value: ethers.parseEther(priceInEth),
+      value: priceInEth,
     });
 
     console.log("Transaccion enviada:", tx.hash);

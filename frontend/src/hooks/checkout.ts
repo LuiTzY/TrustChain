@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { useWallet } from '@/apps/users/context/WalletContext';
 import { useToast } from '@/hooks/use-toast';
-import { buyProductOnChain } from '@/apps/helpers/web3';
 import { useCart } from '@/apps/users/context/CartContext';
+import { buyProductOnChain } from '@/apps/helpers/web3';
 
 interface CheckoutResult {
   productId: number;

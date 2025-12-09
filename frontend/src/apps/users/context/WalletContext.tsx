@@ -6,7 +6,7 @@ import { createContext, useContext, useState, useEffect } from "react";
 const WalletContext = createContext(null);
 
 export const WalletProvider = ({ children }) => {
-  console.log("INICIALIZAMOS EL CONTEXTO DEL WALLET")
+  // console.log("INICIALIZAMOS EL CONTEXTO DEL WALLET")
   const [account, setAccount] = useState(null);
   const [config, setConfig] = useState(null);
   const [contract,setContract] =  useState(null);
@@ -14,7 +14,7 @@ export const WalletProvider = ({ children }) => {
 
   /* === Carga la configuracion de la blockchain obtenida por el API === */
   const loadBlockchainConfig = async () => {
-    console.log("Obteniendo configuración de la blockchain desde el backend...");
+    // console.log("Obteniendo configuración de la blockchain desde el backend...");
 
       const info = await blockchain_service.getBlockchainInfo();
 

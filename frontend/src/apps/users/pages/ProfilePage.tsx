@@ -33,15 +33,18 @@ const Profile = () => {
         const decoded: any = jwtDecode(token);
         const userId = decoded.user_id || decoded.id || decoded.sub;
 
+        console.log(userId)
+        console.log(decoded);
         if (!userId) {
           toast.error("Token inválido");
-          navigate("/login");
+          // navigate("/login");
           return;
         }
 
         // 3. Obtener datos del usuario
-        const data = (await UserService.getUserById(userId)).data;
+        const data = await UserService.getUserById(userId);
         
+        console.log("Servicio de data", data)
         // 4. Validar que tiene los campos necesarios
         if (!data || !data.first_name || !data.last_name) {
           throw new Error("Datos de usuario incompletos");

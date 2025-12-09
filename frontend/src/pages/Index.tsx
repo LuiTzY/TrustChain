@@ -38,6 +38,7 @@ const Index = () => {
   }
 
   if (error) {
+    // navi
     console.error('Error al cargar productos:', error);
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -56,7 +57,7 @@ const Index = () => {
     p.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // Calcular estadísticas
+  // Calcular estaditica
   const totalProducts = products.length;
   const totalValue = products.reduce((sum: number, p: any) => {
     try {

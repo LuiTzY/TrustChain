@@ -33,8 +33,10 @@ export const UserService = {
     const register_data = apiClient<APIGeneralResponse<RegisterResponse>>("POST",`${USER_BASE_API}`, data)
     return register_data
   },
-  getUserById:(id:number)=>{
-      return apiClient<APIGeneralResponse<User>>("POST",`${USER_BASE_API}${id}/`)
+  getUserById: async (id:number)=>{
+      const data =  apiClient<APIGeneralResponse<User>>("GET",`${USER_BASE_API}${id}/`)
+      console.log("DESDE USER BY ID: ",data)
+      return data;
 
   },
   updateUser:(id:number, data)=>{
