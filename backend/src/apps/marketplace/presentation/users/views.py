@@ -76,7 +76,7 @@ class UserViewSet(viewsets.ModelViewSet):
 
 
 class UserBalanceView(GenericJwtAPIView):
-    
+ 
     def get(self,request):
         service =  UserEthersBalance()
         try:
@@ -100,7 +100,9 @@ class UserProducts(GenericJwtAPIView):
         que haga la solicitud
     """
     def get(self, request):
-        print(f"Este es el usuario en la request {self.request.user.username}")
+        
+        print(f"Este es el usuario en la request {self.request.user.items_selling}")
+        print
         repo = DjangoUserRepository()
         service = UserProductsListService(repo)
         serializer = UserProductTypeListSerializerOptions(data=self.request.query_params)

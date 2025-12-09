@@ -16,6 +16,7 @@ class GenericJwtViewSet(JwtAuthMixin,viewsets.ModelViewSet):
     
     
 class GenericJwtAPIView(JwtAuthMixin,APIView):
+    authentication_clasess = [JWTAuthentication]
     permission_clases = [IsAuthenticated]
     """
         Api View generico que cuenta con autenticacion con JWT

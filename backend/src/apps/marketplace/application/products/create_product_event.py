@@ -16,7 +16,7 @@ class CreateProductFromEventService:
         entity = Product(
             id=event_data['id'],
             name=event_data["name"],
-            price=float(event_data["price"]),
+            price = int(event_data["price"]),
             seller_wallet=event_data["seller"],
             status="listed"
         )

@@ -39,7 +39,7 @@ class DjangoWeb3Repository(IWeb3ProductRepositroy):
         account = self.w3.eth.accounts[0] 
         
         #convertirmos el precio en eth
-        price_in_ethers = Web3.to_wei(product['price'],"ether")
+        price_in_ethers = int(product['price'])
         
         # creamos la transaccion
         tx = self.contract.functions.listItem(product['name'],product['description'], price_in_ethers).build_transaction({
