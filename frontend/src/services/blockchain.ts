@@ -9,3 +9,15 @@ export const blockchain_service = {
         return apiClient<APIGeneralResponse<BlockchainInfo>>("GET",`${BLOCKCHAIN_API_URL}blockchain-info/`)
     }
 }
+
+export async function getEthRates() {
+  const res = await fetch(
+    "https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd,dop"
+  );
+  const data = await res.json();
+
+  return {
+    priceUSD: data.ethereum.usd,
+    priceDOP: data.ethereum.dop
+  };
+}

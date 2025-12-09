@@ -1,27 +1,45 @@
 import { apiClient } from "@/api/api";
-import { APIGeneralResponse } from "@/api/types/response";
+import { APIGeneralResponse, LoginResponse, RegisterResponse } from "@/api/types/response";
+import { SetSession } from "@/apps/helpers/jwt";
 import { Product } from "@/apps/products/types/product.types";
-import { User } from "@/apps/users/types/user.types";
-import { useToast } from "@/hooks/use-toast";
-import { useNavigate } from "react-router-dom";
+import { LoginCredentials, RegisterData, User } from "@/apps/users/types/user.types";
+import { register } from "module";
+
 
 const USER_API_URL_BALANCE = "/api/users/balance/"
-const USER_API_TOKEN_URL = "/api/auth/token/"
+const USER_API_AUTH_URL = "/api/auth/"
 const USER_BASE_API = "/api/user/"
 
 const USER_PRODUCTS_URL_API = "/api/user/products/me";
 export const UserService = {
-  getUserBalance: () => {
-    return apiClient<APIGeneralResponse<number>>("GET", USER_API_URL_BALANCE)
+  getUserBalance: async () => {
+    const data =   await apiClient<APIGeneralResponse<number>>("GET", USER_API_URL_BALANCE)
+    console.log("Esto dice:", data)
+    return data
   },
   validateToken:(token)=>{
-    return apiClient<APIGeneralResponse<string>>("POST",`${USER_API_TOKEN_URL}verify/`,{"token":token})
+    return apiClient<APIGeneralResponse<string>>("POST",`${USER_API_AUTH_URL}token/verify/`,{"token":token})
   },
   getUserInfo:(id: number)=>{
     return apiClient<User>("GET",`${USER_BASE_API}/${id}`)
   },
   getMyBuys:()=>{
-    return apiClient<APIGeneralResponse<Product[]>>("GET",`${USER_PRODUCTS_URL_API}?list_type=seller`)
+    return apiClient<APIGeneralResponse<Product[]>>("GET",`${USER_PRODUCTS_URL_API}?list_type=buyer`)
+  },
+  login:(data:LoginCredentials)=>{
+       return apiClient<LoginResponse>("POST",`${USER_API_AUTH_URL}login/`, data)
+  },
+  registerUser:(data:RegisterData)=>{
+    const register_data = apiClient<APIGeneralResponse<RegisterResponse>>("POST",`${USER_BASE_API}`, data)
+    return register_data
+  },
+  getUserById:(id:number)=>{
+      return apiClient<APIGeneralResponse<User>>("POST",`${USER_BASE_API}${id}/`)
+
+  },
+  updateUser:(id:number, data)=>{
+      return apiClient<APIGeneralResponse<User>>("PUT",`${USER_BASE_API}${id}/`,data)
+
   }
 };
 

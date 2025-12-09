@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { RegisterData } from "../types/user.types";
-import { registerUser } from "@/api/api";
 import { useToast } from "@/hooks/use-toast";
+import { UserService } from "@/services/user";
+import { SetSession } from "@/apps/helpers/jwt";
+import { useNavigate } from "react-router-dom";
 
 export default function RegisterForm() {
   const [form, setForm] = useState<RegisterData>({
@@ -12,7 +14,7 @@ export default function RegisterForm() {
     password: "",
   });
 
-  const [step, setStep] = useState(1); // 👈 controla el paso actual
+  const [step, setStep] = useState(1);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) =>
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -20,18 +22,24 @@ export default function RegisterForm() {
   const handleNext = () => setStep((prev) => prev + 1);
   const handlePrev = () => setStep((prev) => prev - 1);
   const { toast } = useToast();
+  const navigate = useNavigate(); 
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const data = await registerUser(form);
+      const data = (await UserService.registerUser(form)).data;
+      console.log("Esto es lo recibido", data)
+      SetSession(data.access_token, data.refresh)
       console.log(data)
        toast({
-        title: `Registro Exitoso ${data.username}`,
-        description: `Esta es tu walletAddress:${data.wallet_address} `,
+        title: `Registro Exitoso`,
+        description: ` Te hemos asignado una wallet address de manera automatica`,
         className: "bg-green-500 text-white border-green-600",
         
       });
+
+        navigate("/dashboard");
+
     } catch(error) {
         toast({
         title: `Error al iniciar sesion`,

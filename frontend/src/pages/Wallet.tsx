@@ -1,37 +1,12 @@
 import { Sidebar } from "@/components/Sidebar";
 import { Wallet as WalletIcon, TrendingUp, ArrowUpRight, ArrowDownLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import nft1 from "@/assets/nft-1.png";
-import nft2 from "@/assets/nft-2.png";
 import { useQuery } from "@tanstack/react-query";
 import { UserService } from "@/services/user";
+import { ProductService } from "@/services/product";
+import { getEthRates } from "@/services/blockchain";
 
-const transactions = [
-  {
-    id: 1,
-    type: "buy",
-    name: "Cyberpunk Cityscape NFT",
-    amount: "2.5 ETH",
-    date: "Hace 2 horas",
-    status: "Completado"
-  },
-  {
-    id: 2,
-    type: "sell",
-    name: "Digital Asset #4523",
-    amount: "1.8 ETH",
-    date: "Ayer",
-    status: "Completado"
-  },
-  {
-    id: 3,
-    type: "buy",
-    name: "Software License Pro",
-    amount: "0.9 ETH",
-    date: "Hace 3 días",
-    status: "Completado"
-  }
-];
+
 
 const WalletU = () => {
   const balanceQuery = useQuery({
@@ -44,9 +19,33 @@ const WalletU = () => {
     queryFn: UserService.getMyBuys
   });
 
+   const {data, isLoading, error} = useQuery({
+      queryKey:["payments"],
+      queryFn: ProductService.getPayments,
+      refetchInterval: 3000000, // actualiza cada 30s
+
+    })
+
+    const { data: rates } = useQuery({
+      queryKey: ["eth-rates"],
+      queryFn: getEthRates,
+      refetchInterval: 30000, // actualiza cada 30s
+    });
+
+    if (!rates) return null;
+
+    const { usd, dop, formattedUSD, formattedDOP } = convertEthBalance(
+      10000,
+      rates.priceUSD,
+      rates.priceDOP
+    );
+
+  const transactions = data?.data;
+  
+
   // Extraer datos de forma segura
-  const balance = balanceQuery.data?.data || 0;
-  const myAssets = productsQuery.data?.data || [];
+  const balance = balanceQuery?.data?.data || 0;
+  const myAssets = productsQuery?.data?.data || [];
 
   return (
     <div className="min-h-screen flex">
@@ -88,10 +87,10 @@ const WalletU = () => {
                           {balance} ETH
                         </p>
                         <p className="text-sm text-muted-foreground mt-1">
-                          DOP: {(balance * 60).toFixed(2)}
+                          DOP: {formattedDOP}
                         </p>
                         <p className="text-sm text-muted-foreground">
-                          USD: {(balance * 3500).toFixed(2)}
+                          USD: {formattedUSD}
                         </p>
                       </>
                     )}
@@ -104,21 +103,6 @@ const WalletU = () => {
                 </div>
               </div>
 
-              <div className="flex gap-4">
-                <Button 
-                  className="gradient-primary hover:opacity-90"
-                  disabled={balanceQuery.isLoading}
-                >
-                  Depositar
-                </Button>
-                <Button 
-                  variant="outline" 
-                  className="border-primary text-primary hover:bg-primary hover:text-primary-foreground"
-                  disabled={balanceQuery.isLoading}
-                >
-                  Retirar
-                </Button>
-              </div>
             </div>
           </div>
 
@@ -127,30 +111,25 @@ const WalletU = () => {
             <div>
               <h2 className="text-2xl font-bold mb-6">Transacciones recientes</h2>
               <div className="space-y-4">
-                {transactions.map((tx) => (
+                {transactions?.map((tx) => (
                   <div 
                     key={tx.id} 
                     className="glass-card rounded-2xl p-5 hover:shadow-[0_0_20px_rgba(42,56,255,0.2)] transition-all"
                   >
                     <div className="flex items-center gap-4">
-                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
-                        tx.type === 'buy' ? 'bg-primary/20' : 'bg-accent/20'
-                      }`}>
-                        {tx.type === 'buy' ? (
+                      <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-primary/20">
+                      
                           <ArrowDownLeft className="w-5 h-5 text-primary" />
-                        ) : (
                           <ArrowUpRight className="w-5 h-5 text-accent" />
-                        )}
                       </div>
                       
                       <div className="flex-1">
-                        <p className="font-semibold">{tx.name}</p>
-                        <p className="text-sm text-muted-foreground">{tx.date}</p>
+                        <p className="font-semibold">{tx.tx_hash}</p>
                       </div>
                       
                       <div className="text-right">
-                        <p className={`font-bold ${tx.type === 'buy' ? 'text-primary' : 'text-accent'}`}>
-                          {tx.type === 'buy' ? '-' : '+'}{tx.amount}
+                        <p className={`font-bold ${tx.buyer_address === 'buy' ? 'text-primary' : 'text-accent'}`}>
+                          {tx.amout}
                         </p>
                         <p className="text-xs text-muted-foreground">{tx.status}</p>
                       </div>
@@ -191,12 +170,9 @@ const WalletU = () => {
                     >
                       <div className="flex items-center gap-4">
                         <img
-                          src={asset.image_url || nft1}
+                          src={asset.image_url}
                           alt={asset.name || "Activo"}
                           className="w-20 h-20 rounded-xl object-cover"
-                          onError={(e) => {
-                            e.currentTarget.src = nft1;
-                          }}
                         />
                         
                         <div className="flex-1">
@@ -233,3 +209,20 @@ const WalletU = () => {
 };
 
 export default WalletU;
+
+export function convertEthBalance(balanceEth: number, priceUSD: number, priceDOP: number) {
+  const usd = Number(balanceEth) * Number(priceUSD);
+  const dop = Number(balanceEth) * Number(priceDOP);
+
+  const formattedUSD = new Intl.NumberFormat("en-US", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  }).format(usd);
+
+  const formattedDOP = new Intl.NumberFormat("es-DO", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  }).format(dop);
+
+  return { usd, dop, formattedUSD, formattedDOP };
+}

@@ -3,15 +3,14 @@ import { Sidebar } from "@/components/Sidebar";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Shield, FileText, ExternalLink, MessageCircle } from "lucide-react";
 import { useState } from "react";
-import nft1 from "@/assets/nft-1.png";
-import { PurchaseDialog } from "@/components/PurchaseDialog";
-import { ChatDialog } from "@/components/ChatDialog";
+import { ChatDialog } from "@/apps/products/components/ChatDialog";
 import { useQuery } from "@tanstack/react-query";
 import { ProductService } from "@/services/product";
 import { Loader } from "@/components/ui/loader";
 import { formatEther } from "ethers";
 import { blockchain_service } from "@/services/blockchain";
 import { useAuth } from "@/apps/users/context/AuthContext";
+import { PurchaseDialog } from "../components/PurchaseDialog";
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -44,7 +43,6 @@ const ProductDetail = () => {
       />
       <ChatDialog
         productId={data.id}
-        userId="1"
         open={isChatOpen}
         onOpenChange={setIsChatOpen}
         productTitle={data.name}
@@ -125,9 +123,7 @@ const ProductDetail = () => {
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Contrato</span>
                     <span className="font-mono text-primary">
-                      { blockchainQuery ?
-                      blockchainQuery.data.data.marketplace_address
-                      : "Cargando informacion del contrato"}
+                     { blockchainQuery.data?.data?.marketplace_address ?? "Cargando..." }
                     </span>
                   </div>
                   <div className="flex justify-between">

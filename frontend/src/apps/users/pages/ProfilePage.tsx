@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { Sidebar } from "@/components/Sidebar";
 import { UserEditModal } from "../pages/UserEditModal";
 import { Button } from "@/components/ui/button";
-import { getUserById, updateUser } from "../api/auth.api";
 import { toast } from "sonner";
 import {
   Mail,
@@ -15,6 +14,7 @@ import {
 import { jwtDecode } from "jwt-decode";
 
 import type { User } from "../types/user.types";
+import { UserService } from "@/services/user";
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -40,7 +40,7 @@ const Profile = () => {
         }
 
         // 3. Obtener datos del usuario
-        const data = await getUserById(userId);
+        const data = (await UserService.getUserById(userId)).data;
         
         // 4. Validar que tiene los campos necesarios
         if (!data || !data.first_name || !data.last_name) {
@@ -71,7 +71,7 @@ const Profile = () => {
     try {
       console.log("Esta es la data del user", userData)
       console.log("Estos son los campos a actualizar", updatedFields)
-      const updatedUser = await updateUser(userData.id, updatedFields);
+      const updatedUser = await UserService.updateUser(userData.id, updatedFields);
       // Actualizar estado local
       setUserData(updatedUser.data);
       
