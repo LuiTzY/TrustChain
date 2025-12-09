@@ -114,7 +114,7 @@ AUTH_USER_MODEL = "users.UserModel"
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         #esto se debe de cambiar
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        # 'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
     "EXCEPTION_HANDLER": "src.apps.common.exception_handler.custom_exception_handler"
 }

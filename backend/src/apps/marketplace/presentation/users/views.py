@@ -11,11 +11,11 @@ from rest_framework import status
 from src.apps.marketplace.application.users.user_balance import UserEthersBalance
 from rest_framework.permissions import AllowAny
 from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework import viewsets
 
 
-class UserViewSet(GenericJwtViewSet):
-    permission_clases =[AllowAny]
-    authentication_clasess=[]
+class UserViewSet(viewsets.ModelViewSet):
+    permission_clases = [AllowAny]
     queryset =  UserModel.objects.all()
     serializer_class = UserSerializer
     repo = DjangoUserRepository()

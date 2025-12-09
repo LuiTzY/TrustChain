@@ -26,6 +26,8 @@ class DjangoWeb3Repository(IWeb3ProductRepositroy):
         with open(HARDHAT_ABI_PATH) as f:
             self.abi = json.load(f)["abi"] 
             
+    def get_chain_id(self):
+        return self.w3.eth.chain_id
         
     def load_contract(self):
         self.contract = self.w3.eth.contract(address=self.contract_address, abi=self.abi)

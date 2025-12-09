@@ -10,5 +10,5 @@ router.register(r'products', ProductViewSet, basename='products')
 
 urlpatterns = [
     path('',include(router.urls), name='product'),
-    path('buy/<int:id>/', BuyProductApiView.as_view(), name='buy-product')
+    path('buy/<int:id>/', BuyProductApiView.as_view(), name='buy-product'),
 ]
