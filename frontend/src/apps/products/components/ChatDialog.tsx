@@ -21,7 +21,7 @@ Cambiar a localhost en caso de no tener docker: const WEB_SOCKET_URL = "ws://loc
 
 */
 // const WEB_SOCKET_URL = "ws://host.docker.internal:8000/api/chat/";
-const WEB_SOCKET_URL = "ws://api:8000/api/chat/";
+const WEB_SOCKET_URL = "ws://localhost:8000/api/chat/";
 
 interface Message {
   id: string;

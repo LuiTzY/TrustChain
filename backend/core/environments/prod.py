@@ -21,3 +21,14 @@ DATABASES = {
 }
 
 ALLOWED_HOSTS = ['host.docker.internal','localhost']
+
+
+#Configuracion tomado para los chats
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('host.docker.internal', 6379)],
+        },
+    },
+}

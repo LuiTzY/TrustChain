@@ -23,3 +23,14 @@ DATABASES = {
 # }
 
 CELERY_BROKER_URL = "redis://127.0.0.1:6379/"
+
+
+#Configuracion tomado para los chats
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)],
+        },
+    },
+}

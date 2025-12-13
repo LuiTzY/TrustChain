@@ -173,16 +173,25 @@ CELERY_BEAT_SCHEDULE = {
 }
 
 #CONFIG DEL CORS para permitir solicitudes del cors
-CORS_ALLOWED_ORIGINS = ["http://localhost:5173","http://localhost:8080"]
-CSRF_TRUSTED_ORIGINS = ["http://localhost:5173","http://localhost:8080"]
+
+CORS_ALLOW_HEADERS = [
+    'Authorization',
+    'content-type',
+    'accept',
+    'origin',
+    'x-csrftoken',
+]
+CORS_ALLOW_METHODS = [
+    'GET',
+    'POST',
+    'PUT',
+    'PATCH',
+    'DELETE',
+    'OPTIONS',
+]
+
+CORS_ALLOWED_ORIGINS = ["http://localhost:5173","http://localhost:8080","http://127.0.0.1:5173"]
+CSRF_TRUSTED_ORIGINS = ["http://localhost:5173","http://localhost:8080","http://127.0.0.1:5173"]
 
 
-#Configuracion tomado para los chats
-CHANNEL_LAYERS = {
-    'default': {
-        'BACKEND': 'channels_redis.core.RedisChannelLayer',
-        'CONFIG': {
-            "hosts": [('127.0.0.1', 6379)],
-        },
-    },
-}
+
