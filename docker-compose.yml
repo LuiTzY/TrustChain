@@ -132,7 +132,7 @@ services:
     container_name: TRUSTCHAIN-FRONTEND
     image: trustchain-frontend/latest
     ports:
-      - 9000:80 
+      - 5173:80 
     
     depends_on:
       - api
