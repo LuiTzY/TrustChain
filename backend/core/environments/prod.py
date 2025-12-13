@@ -19,3 +19,5 @@ DATABASES = {
         'PORT': f'{os.environ.get("DATABASE_PORT_PROD")}'
     }
 }
+
+ALLOWED_HOSTS = ['host.docker.internal','localhost']

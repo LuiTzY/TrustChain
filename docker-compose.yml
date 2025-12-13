@@ -53,7 +53,7 @@ services:
       DATABASE_NAME_PROD: trustdb
       DATABASE_USER_PROD: trustuser
       DATABASE_PASSWORD_PROD: 1234
-      DATABASE_HOST_PROD: db
+      DATABASE_HOST_PROD: host.docker.internal
       DATABASE_PORT_PROD: 3307
 
     networks:
@@ -88,7 +88,7 @@ services:
       DATABASE_NAME_PROD: trustdb
       DATABASE_USER_PROD: trustuser
       DATABASE_PASSWORD_PROD: 1234
-      DATABASE_HOST_PROD: db
+      DATABASE_HOST_PROD: host.docker.internal
       DATABASE_PORT_PROD: 3307
 
   db:
