@@ -116,7 +116,11 @@ REST_FRAMEWORK = {
         #esto se debe de cambiar
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
-    "EXCEPTION_HANDLER": "src.apps.common.exception_handler.custom_exception_handler"
+    "EXCEPTION_HANDLER": "src.apps.common.exception_handler.custom_exception_handler",
+    'DEFAULT_RENDERER_CLASSES': [
+    'rest_framework.renderers.JSONRenderer',
+    'rest_framework.renderers.BrowsableAPIRenderer',
+]
 }
 
 
